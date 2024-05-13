@@ -13,16 +13,16 @@
         <span>账号密码登录</span>
         <span class="line"></span>
       </div>
-      <el-form :model="form" class="w-[250px]">
-        <el-form-item>
+      <el-form ref="formRef" :rules="rules" :model="form" class="w-[250px]">
+        <el-form-item prop="username">
           <el-input v-model="form.username" placeholder="请输入用户名">
             <template #prefix>
               <el-icon class="el-input__icon"><user /></el-icon>
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item>
-          <el-input v-model="form.password" placeholder="请输入密码">
+        <el-form-item prop="password">
+          <el-input v-model="form.password" placeholder="请输入密码" type="password" show-password>
             <template #prefix>
               <el-icon class="el-input__icon"><lock /></el-icon>
             </template>
@@ -37,16 +37,66 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router';
+import { login } from '@/api/manager'
+import { ElNotification } from 'element-plus'
 
-// do not use same name with ref
+const router = useRouter()
+
+// 表单数据
 const form = reactive({
   username: '',
   password: ''
 })
 
+// 校验规则
+const rules = {
+  username: [
+    {
+      required: true,
+      message: '用户名不能为空',
+      trigger: 'blur'
+    },
+  ],
+  password: [ 
+  {
+      required: true,
+      message: '密码不能为空',
+      trigger: 'blur'
+    },
+  ]
+}
+
+const formRef = ref(null)
+
 const onSubmit = () => {
-  console.log('submit!')
+  formRef.value?.validate((valid) => {
+    if (!valid) {
+      return false
+    }
+    login(form.username, form.password).then(res => {
+      console.log(res)
+
+      // 提示成功
+      ElNotification({
+        message: "登录成功",
+        type: 'success',
+        duration: 3000
+      })
+
+      // 存储token和用户相关信息
+
+      // 跳转到后台首页
+      router.push('/')
+    }).catch(err => {
+      ElNotification({
+        message: err.response.data.msg || "请求失败",
+        type: 'error',
+        duration: 3000
+      })
+    })
+  })
 }
 </script>
 
