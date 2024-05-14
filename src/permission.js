@@ -1,10 +1,12 @@
 import router from '@/router'
 import store from './store'
 import { getToken } from '@/composables/auth'
-import { toast } from './composables/util'
+import { toast, showFullLoading, hideFullLoading } from './composables/util'
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
+  // 显示loading
+  showFullLoading()
 
   const token = getToken()
 
@@ -27,3 +29,6 @@ router.beforeEach(async (to, from, next) => {
 
   next()
 })
+
+// 全局后置守卫
+router.afterEach((to, from) => hideFullLoading())
