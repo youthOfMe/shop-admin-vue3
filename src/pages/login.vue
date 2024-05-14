@@ -44,12 +44,14 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex'
 import { login, getInfo } from '@/api/manager'
 import { toast } from '@/composables/util'
 import {
   setToken,
 } from '@/composables/auth'
 
+const store = useStore()
 const router = useRouter()
 
 // 表单数据
@@ -94,6 +96,8 @@ const onSubmit = () => {
       // 获取用户相关信息
       getInfo().then(res2 => {
         console.log(res2);
+
+        store.commit("SET_USERINFO", res2)
       })
 
       // 跳转到后台首页

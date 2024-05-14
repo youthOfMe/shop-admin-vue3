@@ -12,8 +12,7 @@ const service = axios.create({
 service.interceptors.request.use(function (config) {
 
   // 往header头中自动添加token
-  const cookie = getToken()
-  const token = cookie.get("admin-token")
+  const token = getToken()
   if (token) {
     config.headers["token"] = token
   }
@@ -31,7 +30,7 @@ service.interceptors.response.use(function (response) {
 }, function (error) {
   // 对响应错误做些什么
 
-  toast(error.response.data.msg || "请求失败", "error")
+  toast(error.response?.data.msg || "请求失败", "error")
 
   return Promise.reject(error)
 })
