@@ -45,7 +45,7 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex'
-import { login, getInfo } from '@/api/manager'
+import { login } from '@/api/manager'
 import { toast } from '@/composables/util'
 import {
   setToken,
@@ -86,19 +86,10 @@ const onSubmit = () => {
       return false
     }
     loading.value = true
-    login(form.username, form.password).then(res => {
+
+    store.dispatch("login", form).then(res => {
       // 提示成功
       toast("登录成功")
-
-      // 存储token和用户相关信息
-      setToken(res.token)
-
-      // 获取用户相关信息
-      getInfo().then(res2 => {
-        console.log(res2);
-
-        store.commit("SET_USERINFO", res2)
-      })
 
       // 跳转到后台首页
       router.push('/')
