@@ -40,10 +40,31 @@
       </el-dropdown>
     </div>
   </div>
+
+  <el-drawer v-model="showDrawer" title="修改密码" size="45%" :close-on-click-modal="false">
+    <el-form ref="formRef" :rules="rules" :model="form" label-width="80px" size="small">
+      <el-form-item prop="oldpassword" label="旧密码">
+        <el-input v-model="form.oldpassword" placeholder="请输入旧密码" type="password" show-password>
+        </el-input>
+      </el-form-item>
+      <el-form-item prop="password" label="新密码">
+        <el-input v-model="form.password" placeholder="请输入密码" type="password" show-password>
+        </el-input>
+      </el-form-item>
+      <el-form-item prop="repassword" label="确认密码">
+        <el-input v-model="form.repassword" placeholder="请输入确认密码" type="password" show-password>
+        </el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit" :loading="loading">提交</el-button>
+      </el-form-item>
+    </el-form>
+  </el-drawer>
 </template>
 
 <script setup>
-import { logout } from '@/api/manager'
+import { ref, reactive } from 'vue'
+import { logout, updatePassword } from '@/api/manager'
 import { showModal, toast } from '@/composables/util'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -59,13 +80,65 @@ const {
 const router = useRouter()
 const store = useStore()
 
+// 修改密码
+const showDrawer = ref(false)
+
+// 表单数据
+const form = reactive({
+  oldpassword: '',
+  password: '',
+  repassword: ''
+})
+
+// 校验规则
+const rules = {
+  oldpassword: [
+    {
+      required: true,
+      message: '旧密码不能为空',
+      trigger: 'blur'
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: '新密码不能为空',
+      trigger: 'blur'
+    },
+  ],
+  repassword: [
+    {
+      required: true,
+      message: '确认密码不能为空',
+      trigger: 'blur'
+    },
+  ],
+}
+
+const formRef = ref(null)
+const loading = ref(false)
+const onSubmit = () => {
+  formRef.value?.validate((valid) => {
+    if (!valid) {
+      return false
+    }
+    loading.value = true
+    updatePassword(form).then(res => {
+      toast("修改密码成功, 请重新登录")
+      store.dispatch("logout")
+    }).finally(() => {
+      loading.value = false
+    })
+  })
+}
+
 const handleCommand = (e) => {
   switch (e) {
     case "logout":
       handleLogout()
       break;
     case "rePassword":
-      console.log("修改密码");
+      showDrawer.value = true
       break;
   }
 }
@@ -115,6 +188,6 @@ function handleLogout() {
 .f-header .dropdown {
   height: 64px;
   cursor: pointer;
-  @apply flex justify-center items-center text;
+  @apply flex justify-center items-center text-light-50;
 }
 </style>
