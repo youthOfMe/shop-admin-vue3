@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import { login, getInfo } from '@/api/manager'
 import {
-  setToken,
+  setToken, removeToken
 } from '@/composables/auth'
 
 const store = createStore({
@@ -36,6 +36,11 @@ const store = createStore({
           resolve(res)
         }).catch(err => reject())
       })
+    },
+    // 退出登录
+    logout({ commit }) {
+      // 移除cookie里的token
+      removeToken()
     }
   }
 })

@@ -1,4 +1,5 @@
 import router from '@/router'
+import store from './store'
 import { getToken } from '@/composables/auth'
 import { toast } from './composables/util'
 

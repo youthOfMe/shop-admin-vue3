@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex'
 import { login } from '@/api/manager'
@@ -98,6 +98,19 @@ const onSubmit = () => {
     })
   })
 }
+
+// 监听回车事件
+function onKeyUp(e) {
+  if (e.key == "Enter") onSubmit()
+}
+
+// 添加键盘事件
+onMounted(() => {
+  document.addEventListener("keyup", onKeyUp)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener("keyup", onKeyUp)
+})
 </script>
 
 <style scoped>
