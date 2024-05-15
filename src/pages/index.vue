@@ -1,33 +1,40 @@
 <template>
   <div>
-    后台首页
+    <el-row :gutter="20">
+      <el-col :span="6" :offset="0" v-for="(item, index) in panels" :key="index">
+        <el-card shadow="hover" :body-style="{ padding: '20px' }">
+          <template #header>
+            <div class="flex justify-between">
+              <span class="text-sm">{{ item.title }}</span>
+              <el-tag :type="item.unitColor || 'success'" effect="plain">
+                {{ item.unit }}
+              </el-tag>
+            </div>
+          </template>
+          <span class="text-3xl font-bold text-gray-500">
+            {{ item.value }}
+          </span>
+          <el-divider />
+          <div class="flex justify-between text-sm text-gray-500">
+            <span>{{ item.subTitle }}</span>
+            <span>{{ item.subValue }}</span>
+          </div>
+        </el-card>
 
-    {{ $store.state.user.username }}
-
-    <el-button @click="handleLogout">退出登录</el-button>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script setup>
-import { logout } from '@/api/manager'
-import { showModal, toast } from '@/composables/util'
-import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { ref } from 'vue'
+import {
+  getStatistics1
+} from '@/api/index'
 
-const router = useRouter()
-const store = useStore()
-
-function handleLogout() {
-  showModal('是否要退出登录?').then(res => {
-    logout().finally(() => {
-      // 移除cookie中的token
-      // 清楚当前用户状态 vuex
-      store.dispatch("logout")
-      // 跳转回登录页
-      router.push("/login")
-      // 提示退出登录
-      toast("退出登录成功")
-    })
-  }).catch()
-}
+const panels = ref([])
+getStatistics1().then(res => {
+  panels.value = res.panels
+  console.log(res);
+})
 </script>
