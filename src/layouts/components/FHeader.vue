@@ -7,8 +7,9 @@
       方亮学习系统
     </span>
     <el-tooltip effect="dark" content="折叠" placement="bottom">
-      <el-icon class="icon-btn">
-        <fold></fold>
+      <el-icon class="icon-btn" @click="$store.commit('handleAsideWidth')">
+        <fold v-if="$store.state.asideWidth === '250px'"></fold>
+        <Expand v-else />
       </el-icon>
     </el-tooltip>
     <el-tooltip effect="dark" content="刷新" placement="bottom">

@@ -1,6 +1,7 @@
 <template>
-  <div class="f-menu">
-    <el-menu default-active="2" class="border-0" @select="handleSelect">
+  <div class="f-menu" :style="{ width: $store.state.asideWidth }">
+    <el-menu unique-opened :collapse="isCollapse" :default-active="defaultActive" class="border-0"
+      @select="handleSelect" :collapse-transition="false">
       <template v-for="(item, index) in asideMenus" :key="index">
         <el-sub-menu v-if="item.child && item.child.length > 0" :index="item.name">
           <template #title>
@@ -25,16 +26,21 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-const asideMenus = [{
-  name: "后台面板",
-  icon: "help",
-  child: [{
-    name: "主控台",
-    icon: "home-filled",
-    frontpath: "/1"
-  }]
-}]
+import { computed, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+const route = useRoute()
+
+// 默认选中
+const defaultActive = ref(route.path)
+
+// 是否折叠
+const isCollapse = computed(() => !(store.state.asideWidth === '250px'))
+
+const asideMenus = computed(() => store.state.menus)
 
 const router = useRouter()
 const handleSelect = (e) => {
@@ -44,11 +50,16 @@ const handleSelect = (e) => {
 
 <style>
 .f-menu {
-  width: 250px;
+  transition: all 0.5s;
   top: 64px;
   bottom: 0;
   left: 0;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   @apply shadow-md fixed bg-light-50;
+}
+
+.f-menu::-webkit-scrollbar {
+  width: 0px;
 }
 </style>
