@@ -41,7 +41,11 @@
     </div>
   </div>
 
-  <el-drawer v-model="showDrawer" title="修改密码" size="45%" :close-on-click-modal="false">
+  <!-- <el-drawer v-model="showDrawer" title="修改密码" size="45%" :close-on-click-modal="false">
+
+  </el-drawer> -->
+
+  <form-drawer ref="formDrawerRef" title="修改密码" destroyOnClose @submit="onSubmit">
     <el-form ref="formRef" :rules="rules" :model="form" label-width="80px" size="small">
       <el-form-item prop="oldpassword" label="旧密码">
         <el-input v-model="form.oldpassword" placeholder="请输入旧密码" type="password" show-password>
@@ -55,11 +59,8 @@
         <el-input v-model="form.repassword" placeholder="请输入确认密码" type="password" show-password>
         </el-input>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit" :loading="loading">提交</el-button>
-      </el-form-item>
     </el-form>
-  </el-drawer>
+  </form-drawer>
 </template>
 
 <script setup>
@@ -69,6 +70,7 @@ import { showModal, toast } from '@/composables/util'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useFullscreen } from '@vueuse/core'
+import formDrawer from '@/components/FormDrawer.vue'
 
 const {
   // 全屏状态
@@ -81,8 +83,7 @@ const router = useRouter()
 const store = useStore()
 
 // 修改密码
-const showDrawer = ref(false)
-
+const formDrawerRef = ref(null)
 // 表单数据
 const form = reactive({
   oldpassword: '',
@@ -116,18 +117,17 @@ const rules = {
 }
 
 const formRef = ref(null)
-const loading = ref(false)
 const onSubmit = () => {
   formRef.value?.validate((valid) => {
     if (!valid) {
       return false
     }
-    loading.value = true
+    formDrawerRef.value.showLoading()
     updatePassword(form).then(res => {
       toast("修改密码成功, 请重新登录")
       store.dispatch("logout")
     }).finally(() => {
-      loading.value = false
+      formDrawerRef.value.hideLoading()
     })
   })
 }
@@ -138,7 +138,8 @@ const handleCommand = (e) => {
       handleLogout()
       break;
     case "rePassword":
-      showDrawer.value = true
+      // showDrawer.value = true
+      formDrawerRef.value.open()
       break;
   }
 }
