@@ -1,7 +1,8 @@
 <template>
   <el-aside width="220px" class="image-aside" v-loading="loading">
     <div class="top">
-      <AsideList :active="activeId === item.id" v-for="(item, index) in list" :key="index">
+      <AsideList :active="activeId === item.id" v-for="(item, index) in list" :key="index" @edit="handleEdit(item)"
+        @delete="handleDelete(item.id)">
         {{ item.name }}
       </AsideList>
     </div>
@@ -11,7 +12,7 @@
     </div>
   </el-aside>
 
-  <FormDrawer ref="formDrawerRef" @submit="handleSubmit">
+  <FormDrawer :title="drawerTitle" ref="formDrawerRef" @submit="handleSubmit">
     <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
       <el-form-item label="分类名称" prop="name">
         <el-input v-model="form.name"></el-input>
@@ -25,12 +26,18 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import {
-  getImageClassList
+  getImageClassList,
+  createImageClass,
+  updateImageClass,
+  deleteImageClass,
 } from '@/api/image_class.js'
 import FormDrawer from './FormDrawer.vue'
 import AsideList from './AsideList.vue'
+import {
+  toast
+} from '@/composables/util.js'
 
 // 加载动画
 const loading = ref(false)
@@ -65,9 +72,11 @@ function getData(p) {
 
 getData()
 
+// 编辑ID
+const editId = ref(0)
+const drawerTitle = computed(() => editId.value ? '修改' : '新增')
+// 橱窗相关
 const formDrawerRef = ref(null)
-const handleOpenCreate = () => formDrawerRef.value.open()
-
 // 表单相关
 const form = reactive({
   name: "",
@@ -83,10 +92,48 @@ const rules = {
   ]
 }
 const formRef = ref(null)
+// 新增的方法
 const handleSubmit = () => {
   formRef.value.validate((valid) => {
     if (!valid) return
-    console.log('提交成功')
+
+    formDrawerRef.value.showLoading()
+
+    const fun = editId.value ? updateImageClass(editId.value, form) : createImageClass(form)
+    fun.then(res => {
+      toast(`${drawerTitle.value}成功`)
+      getData(editId.value ? currentPage.value : 1)
+      formDrawerRef.value.close()
+    }).finally(() => {
+      formDrawerRef.value.hideLoading()
+    })
+  })
+}
+
+// 新增
+const handleOpenCreate = () => {
+  editId.value = 0
+  form.name = ""
+  form.order = 50
+  formDrawerRef.value.open()
+}
+
+// 编辑的方法
+const handleEdit = (row) => {
+  editId.value = row.id
+  form.name = row.name
+  form.order = row.order
+  formDrawerRef.value.open()
+}
+
+// 删除
+const handleDelete = (id) => {
+  loading.value = true
+  deleteImageClass(id).then(res => {
+    toast("删除成功")
+    getData()
+  }).finally(() => {
+    loading.value = false
   })
 }
 
