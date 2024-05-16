@@ -53,10 +53,11 @@
 
     <el-row :gutter="20" class="mt-[20px]">
       <el-col :span="12" :offset="0">
-        <IndexChart></IndexChart>
+        <IndexChart v-permission="['getStatistics3, GET']"></IndexChart>
       </el-col>
       <el-col :span="12" :offset="0">
         <IndexCard title="店铺及商品提示" tip="店铺及商品提示" :btns="goods"></IndexCard>
+        <IndexCard title="交易提示" tip="交易提示" :btns="order"></IndexCard>
       </el-col>
     </el-row>
 
