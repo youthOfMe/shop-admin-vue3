@@ -50,20 +50,39 @@
     </el-row>
 
     <IndexNavs></IndexNavs>
+
+    <el-row :gutter="20" class="mt-[20px]">
+      <el-col :span="12" :offset="0">
+        <IndexChart></IndexChart>
+      </el-col>
+      <el-col :span="12" :offset="0">
+        <IndexCard title="店铺及商品提示" tip="店铺及商品提示" :btns="goods"></IndexCard>
+      </el-col>
+    </el-row>
+
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import CountTo from '@/components/CountTo.vue'
-import IndexNavs from '@/components/IndexNavs.vue';
+import IndexNavs from '@/components/IndexNavs.vue'
+import IndexCard from '@/layouts/components/IndexCard.vue'
 import {
-  getStatistics1
+  getStatistics1,
+  getStatistics2
 } from '@/api/index'
+import IndexChart from '../components/IndexChart.vue';
 
 const panels = ref([])
 getStatistics1().then(res => {
   panels.value = res.panels
-  console.log(res);
+})
+
+const goods = ref([])
+const order = ref([])
+getStatistics2().then(res => {
+  goods.value = res.goods
+  order.value = res.order
 })
 </script>
