@@ -42,7 +42,7 @@ const asyncRoutes = [
   {
     path: "/goods/list",
     name: "/goods/list",
-    component: About,
+    component: () => import("@/pages/goods/list.vue"),
     meta: {
       title: "商品管理"
     }
@@ -53,6 +53,62 @@ const asyncRoutes = [
     component: () => import("@/pages/category/list.vue"),
     meta: {
       title: "分类列表"
+    }
+  },
+  {
+    path: "/user/list",
+    name: "/user/list",
+    component: () => import("@/pages/user/list.vue"),
+    meta: {
+      title: "用户列表"
+    }
+  },
+  {
+    path: "/order/list",
+    name: "/order/list",
+    component: () => import("@/pages/order/list.vue"),
+    meta: {
+      title: "订单列表"
+    }
+  },
+  {
+    path: "/comment/list",
+    name: "/comment/list",
+    component: () => import("@/pages/comment/list.vue"),
+    meta: {
+      title: "评价列表"
+    }
+  },
+  {
+    path: "/image/list",
+    name: "/image/list",
+    component: () => import("@/pages/image/list.vue"),
+    meta: {
+      title: "图库列表"
+    }
+  },
+  {
+    path: "/notice/list",
+    name: "/notice/list",
+    component: () => import("@/pages/notice/list.vue"),
+    meta: {
+      title: "公告列表"
+    }
+  },
+  {
+    path: "/setting/base",
+    name: "/setting/base",
+    component: () => import("@/pages/setting/base.vue"),
+    meta: {
+      title: "配置列表"
+    }
+  },
+  {
+    path: "/coupon/list",
+    name: "/coupon/list",
+    component: () => import("@/pages/coupon/list.vue"),
+    meta: {
+      title: "优惠券列表"
     }
   },
 ]
