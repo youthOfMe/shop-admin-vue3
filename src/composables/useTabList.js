@@ -69,6 +69,8 @@ export function useTabList() {
 
     activeTab.value = a
     tabList.value = tabList.value.filter(tab => tab.path != t)
+
+    cookie.set("tabList", tabList.value)
   }
 
   // 关闭
