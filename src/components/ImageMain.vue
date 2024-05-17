@@ -1,7 +1,20 @@
 <template>
   <el-main class="image-main">
-    <div class="top">
-      <div v-for="(item, index) in list" :key="index">{{ item.url }}</div>
+    <div class="top p-3">
+      <!-- <div v-for="(item, index) in list" :key="index">{{ item.url }}</div> -->
+      <el-row :gutter="10">
+        <el-col :span="6" :offset="0" v-for="(item, index) in list" :key="index">
+          <el-card shadow="hover" class="relative mb-3" :body-style="{ 'padding': 0 }">
+            <el-image :src="item.url" fit="cover" class="w-full h-[150px]"></el-image>
+            <div class="image-title">{{ item.name }}</div>
+            <div class="flex items-center justify-center p-2">
+              <el-button type="primary" size="small" text>重命名</el-button>
+              <el-button type="primary" size="small" text>删除</el-button>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+
     </div>
     <div class="bottom">
       <el-pagination layout="prev, pager, next" background :total="total" :current-page="currentPage" :page-size="limit"
@@ -94,5 +107,13 @@ defineExpose({
   border-right-color: transparent;
   border-left-color: transparent;
   background-color: rgba(0, 0, 0, 0.1);
+}
+
+.image-title {
+  position: absolute;
+  top: 122px;
+  left: -1px;
+  right: -1px;
+  @apply text-sm truncate text-gray-100 bg-opacity-50 bg-gray-800 px-2 py-1;
 }
 </style>
