@@ -3,12 +3,12 @@
     <span class="truncate">
       <slot></slot>
     </span>
-    <el-button class="ml-auto" text type="primary" size="small" @click="$emit('edit')">
+    <el-button class="ml-auto" text type="primary" size="small" @click.stop="$emit('edit')">
       <el-icon :size="12">
         <Edit />
       </el-icon>
     </el-button>
-    <el-popconfirm title="是否要删除该分类?" confirmButtonText="确认" cancelButtonText="取消" @confirm="$emit('delete')">
+    <el-popconfirm title="是否要删除该分类?" confirmButtonText="确认" cancelButtonText="取消" @confirm.stop="$emit('delete')">
       <template #reference>
         <el-button text type="primary" size="small">
           <el-icon :size="12">
