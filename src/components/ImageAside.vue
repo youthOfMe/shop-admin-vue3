@@ -2,7 +2,7 @@
   <el-aside width="220px" class="image-aside" v-loading="loading">
     <div class="top">
       <AsideList :active="activeId === item.id" v-for="(item, index) in list" :key="index" @edit="handleEdit(item)"
-        @delete="handleDelete(item.id)">
+        @delete="handleDelete(item.id)" @click="handleChangeActiveId(item.id)">
         {{ item.name }}
       </AsideList>
     </div>
@@ -63,7 +63,7 @@ function getData(p) {
     loading.value = false
     const item = list.value[0]
     if (item) {
-      activeId.value = item.id
+      handleChangeActiveId(item.id)
     }
   }).finally(() => {
     loading.value = false
@@ -135,6 +135,14 @@ const handleDelete = (id) => {
   }).finally(() => {
     loading.value = false
   })
+}
+
+// 选中图库分类ID
+const emit = defineEmits(["change"])
+// 切换分类
+function handleChangeActiveId(id) {
+  activeId.value = id
+  emit('change', id)
 }
 
 // 打开表单

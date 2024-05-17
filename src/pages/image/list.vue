@@ -5,8 +5,8 @@
 
     </el-header>
     <el-container>
-      <ImageAside ref="ImageAsideRef"></ImageAside>
-      <ImageMain></ImageMain>
+      <ImageAside ref="ImageAsideRef" @change="handleAsideChange"></ImageAside>
+      <ImageMain ref="ImageMainRef"></ImageMain>
     </el-container>
   </el-container>
 </template>
@@ -22,6 +22,11 @@ const h = windowHeight - 64 - 44 - 40
 const ImageAsideRef = ref(null)
 const handleOpenCreate = () => {
   ImageAsideRef.value.handleOpenCreate()
+}
+
+const ImageMainRef = ref(null)
+const handleAsideChange = (imageClassId) => {
+  ImageMainRef.value.loadData(imageClassId)
 }
 </script>
 

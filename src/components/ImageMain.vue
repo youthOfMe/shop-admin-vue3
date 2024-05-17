@@ -1,13 +1,57 @@
 <template>
   <el-main class="image-main">
     <div class="top">
-      <div v-for="i in 100" :key="i">{{ i }}</div>
+      <div v-for="(item, index) in list" :key="index">{{ item.url }}</div>
     </div>
     <div class="bottom">
-      分页区域
+      <el-pagination layout="prev, pager, next" background :total="total" :current-page="currentPage" :page-size="limit"
+        @current-change="getData" />
     </div>
   </el-main>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import {
+  getImageList
+} from '@/api/image'
+
+// 分页
+const currentPage = ref(1)
+const total = ref(0)
+const limit = ref(10)
+const list = ref([])
+const loading = ref(false)
+const imageClassId = ref(0)
+
+// 获取数据
+function getData(p) {
+  if (typeof p === "number") {
+    currentPage.value = p
+  }
+
+  loading.value = true
+  getImageList(imageClassId.value, currentPage.value).then(res => {
+    total.value = res.totalCount
+    list.value = res.list
+  }).finally(() => {
+    loading.value = false
+  })
+}
+
+
+// 根据分类ID重新加载图片列表
+const loadData = (id) => {
+  currentPage.value = 1
+  imageClassId.value = id
+  getData()
+}
+
+defineExpose({
+  loadData
+})
+
+</script>
 
 <style>
 .image-main {
