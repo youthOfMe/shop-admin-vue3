@@ -27,6 +27,10 @@
         @current-change="getData" />
     </div>
   </el-main>
+
+  <el-drawer v-model="drawer" title="上传图片">
+    <UploadFile :data="{ imageClassId }"></UploadFile>
+  </el-drawer>
 </template>
 
 <script setup>
@@ -40,6 +44,13 @@ import {
   showPrompt,
   toast
 } from '@/composables/util'
+import UploadFile from './UploadFile.vue'
+
+// 上传图片
+const drawer = ref(false)
+const openUploadFile = () => {
+  drawer.value = true
+}
 
 // 分页
 const currentPage = ref(1)
@@ -97,7 +108,8 @@ const handleDelete = (id) => {
 }
 
 defineExpose({
-  loadData
+  loadData,
+  openUploadFile
 })
 
 </script>

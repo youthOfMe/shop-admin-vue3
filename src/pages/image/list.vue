@@ -2,7 +2,7 @@
   <el-container class="bg-white rounded" :style="{ height: (h + 'px') }">
     <el-header class="image-header">
       <el-button type="primary" size="small" @click="handleOpenCreate">新增图片分类</el-button>
-
+      <el-button type="warning" size="small" @click="handleOpenUpload">上传图片</el-button>
     </el-header>
     <el-container>
       <ImageAside ref="ImageAsideRef" @change="handleAsideChange"></ImageAside>
@@ -28,6 +28,8 @@ const ImageMainRef = ref(null)
 const handleAsideChange = (imageClassId) => {
   ImageMainRef.value.loadData(imageClassId)
 }
+
+const handleOpenUpload = () => ImageMainRef.value.openUploadFile()
 </script>
 
 <style scoped>
