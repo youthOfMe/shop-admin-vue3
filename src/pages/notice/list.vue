@@ -18,12 +18,12 @@
       <el-table-column label="操作">
         <template #default="scope">
           <el-button type="primary" size="small" text>修改</el-button>
-          <el-popconfirm title="是否要删除该公告?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete()">
+          <el-popconfirm title="是否要删除该公告?" confirmButtonText="确认" cancelButtonText="取消"
+            @confirm="handleDelete(scope.row.id)">
             <template #reference>
               <el-button type="primary" size="small" text>删除</el-button>
             </template>
           </el-popconfirm>
-
         </template>
       </el-table-column>
     </el-table>
@@ -54,13 +54,17 @@ import { ref, reactive } from 'vue'
 import FormDrawer from '@/components/FormDrawer.vue'
 import {
   getNoticeList,
-  createNotice
+  createNotice,
+  updateNotice,
+  deleteNotice
 } from '@/api/notice'
 import {
   toast
 } from '@/composables/util'
 
 const tableData = ref([])
+
+const loading = ref(false)
 
 // 分页
 const currentPage = ref(1)
@@ -84,7 +88,7 @@ getData()
 const formDrawerRef = ref(null)
 const formRef = ref(null)
 const form = reactive({
-  title: ''
+  title: '',
   content: ''
 })
 const rules = {
@@ -123,6 +127,17 @@ const handleSubmit = () => {
 // 新增
 const handleCreate = () => {
   formDrawerRef.value.open()
+}
+
+// 删除功能
+const handleDelete = (id) => {
+  loading.value = true
+  deleteNotice(id).then(res => {
+    toast('删除成功')
+    getData()
+  }).finally(() => {
+    loading.value = false
+  })
 }
 
 </script>
