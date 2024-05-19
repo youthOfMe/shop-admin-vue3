@@ -17,7 +17,7 @@
       <el-table-column prop="create_time" label="发布时间" width="380" />
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button type="primary" size="small" text>修改</el-button>
+          <el-button type="primary" size="small" text @click="handleEdit(scope.row)">修改</el-button>
           <el-popconfirm title="是否要删除该公告?" confirmButtonText="确认" cancelButtonText="取消"
             @confirm="handleDelete(scope.row.id)">
             <template #reference>
@@ -33,7 +33,7 @@
         @current-change="getData" />
     </div>
 
-    <FormDrawer ref="formDrawerRef" title="新增" @submit="handleSubmit">
+    <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
         <el-form-item label="公告标题" prop="title">
           <el-input v-model="form.title" placeholder="公告标题"></el-input>
@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import FormDrawer from '@/components/FormDrawer.vue'
 import {
   getNoticeList,
@@ -108,15 +108,22 @@ const rules = {
   ]
 }
 
+const editId = ref(0)
+const drawerTitle = computed(() => editId.value ? '修改' : '新增')
+
+// 提交数据
 const handleSubmit = () => {
   formRef.value.validate((valid) => {
     if (!valid) return
 
     formDrawerRef.value.showLoading()
 
-    createNotice(form).then(res => {
-      toast("新增成功")
-      getData(1)
+    const fun = editId.value ? updateNotice(editId.value, form) : createNotice(form)
+
+    fun.then(res => {
+      toast(drawerTitle.value + "成功")
+      // 修改刷新当前页 新增刷新第一页
+      getData(editId.value ? false : 1)
       formDrawerRef.value.close()
     }).finally(() => {
       formDrawerRef.value.hideLoading()
@@ -124,8 +131,32 @@ const handleSubmit = () => {
   })
 }
 
+// 重置表单
+const resetForm = (row = false) => {
+  if (formRef.value) {
+    formRef.value.clearValidate()
+  }
+  if (row) {
+    for (const key in form) {
+      form[key] = row[key]
+    }
+  }
+}
+
 // 新增
 const handleCreate = () => {
+  editId.value = 0
+  resetForm({
+    title: "",
+    content: ""
+  })
+  formDrawerRef.value.open()
+}
+
+// 编辑
+const handleEdit = (row) => {
+  editId.value = row.id
+  resetForm(row)
   formDrawerRef.value.open()
 }
 
@@ -139,5 +170,7 @@ const handleDelete = (id) => {
     loading.value = false
   })
 }
+
+
 
 </script>
