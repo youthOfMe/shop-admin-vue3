@@ -19,3 +19,10 @@ export function updateRoleStatus(id, status) {
 export function deleteRole(id) {
   return axios.post(`/admin/role/${id}/delete`)
 }
+
+export function setRoleRules(id, rule_ids) {
+  return axios.post(`/admin/role/set_rules`, {
+    id,
+    rule_ids
+  })
+}
