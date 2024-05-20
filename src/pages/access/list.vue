@@ -2,7 +2,7 @@
   <div>
     <el-card shadow="never" class="border-0">
       <!-- 新增|刷新 -->
-      <ListHeader @refresh="getData"></ListHeader>
+      <ListHeader @refresh="getData" @create="handleCreate"></ListHeader>
       <el-tree v-loading="loading" :data="tableData" :props="{ label: 'name', children: 'child' }" node-key="id"
         :default-expanded-keys="defaultExpandedKeys">
         <template #default="{ node, data }">
@@ -14,15 +14,47 @@
             <span>{{ data.name }}</span>
 
             <div class="ml-auto">
-              <el-switch :modelValue="status" :active-value="1" :inactive-value="0">
+              <el-switch :modelValue="data.status" :active-value="1" :inactive-value="0">
               </el-switch>
-              <el-button text type="primary" size="small">修改</el-button>
-              <el-button text type="primary" size="small">增加</el-button>
+              <el-button text type="primary" size="small" @click.stop="handleEdit(data)">修改</el-button>
+              <el-button text type="primary" size="small" @click="handleCreate">增加</el-button>
               <el-button text type="primary" size="small">删除</el-button>
             </div>
           </div>
         </template>
       </el-tree>
+
+      <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
+        <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
+          <el-form-item label="上级菜单" prop="rule_id">
+            <el-cascader v-model="form.rule_id" :options="options"
+              :props="{ label: 'name', children: 'child', checkStrictly: true, emitPath: false }"
+              placeholder="请选择上级菜单" />
+          </el-form-item>
+          <el-form-item label="菜单/规则" prop="menu">
+            <el-input v-model="form.menu" placeholder="菜单"></el-input>
+          </el-form-item>
+          <el-form-item label="菜单权限名称" prop="name">
+            <el-input v-model="form.rule_id" placeholder="上级菜单"></el-input>
+          </el-form-item>
+          <el-form-item label="菜单图标" prop="icon">
+            <el-input v-model="form.icon" placeholder="上级菜单"></el-input>
+          </el-form-item>
+          <el-form-item label="前端路由" prop="frontpath">
+            <el-input v-model="form.frontpath" placeholder="上级菜单"></el-input>
+          </el-form-item>
+          <el-form-item label="请求方式" prop="method">
+            <el-input v-model="form.method" placeholder="上级菜单"></el-input>
+          </el-form-item>
+          <el-form-item label="排序" prop="sort">
+            <el-input v-model="form.sort" placeholder="上级菜单"></el-input>
+          </el-form-item>
+          <el-form-item label="上级菜单" prop="rule_id">
+            <el-input v-model="form.rule_id" placeholder="上级菜单"></el-input>
+          </el-form-item>
+        </el-form>
+
+      </FormDrawer>
     </el-card>
 
   </div>
@@ -30,15 +62,20 @@
 
 <script setup>
 import { ref } from 'vue'
+import FormDrawer from '@/components/FormDrawer.vue'
 import ListHeader from '@/components/ListHeader.vue'
 import {
-  getRuleList
+  getRuleList,
+  createRule,
+  updateRule
 } from '@/api/rule'
 
 import {
-  useInitTable
+  useInitTable,
+  useInitForm
 } from '@/composables/useCommon'
 
+const options = ref([])
 const defaultExpandedKeys = ref([])
 const {
   loading,
@@ -47,10 +84,39 @@ const {
 } = useInitTable({
   getList: getRuleList,
   onGetListSuccess: (res) => {
+    options.value = res.rules
     tableData.value = res.list
     defaultExpandedKeys.value = res.list.map(o => o.id)
   }
 })
+
+const {
+  formDrawerRef,
+  formRef,
+  form,
+  rules,
+  drawerTitle,
+  handleSubmit,
+  handleCreate,
+  handleEdit
+} = useInitForm({
+  form: {
+    rule_id: 0,
+    menu: 0,
+    name: '',
+    ccondition: '',
+    method: 'GET',
+    status: 1,
+    order: 50,
+    icon: "",
+    forntpath: ""
+  },
+  rules: {},
+  getData,
+  update: updateRule,
+  create: createRule
+})
+
 </script>
 
 <style>
