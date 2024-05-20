@@ -118,7 +118,15 @@ const asyncRoutes = [
     meta: {
       title: '管理员管理'
     }
-  }
+  },
+  {
+    path: '/access/list',
+    name: '/access/list',
+    component: () => import('@/pages/access/list.vue'),
+    meta: {
+      title: '菜单权限管理'
+    }
+  },
 ]
 
 export const router = createRouter({

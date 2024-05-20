@@ -1,7 +1,7 @@
 <template>
   <el-card shadow="never" class="border-0">
     <!-- 搜索 -->
-    <el-form :model="searchForm" ref="form" label-width="80px" class="mb-3">
+    <el-form :model="searchForm" label-width="80px" class="mb-3">
       <el-row :gutter="20">
         <el-col :span="8" :offset="0">
           <el-form-item label="关键词">
@@ -78,7 +78,7 @@
     </div>
 
     <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
-      <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
+      <el-form :model="form" ref="formRef" label-width="80px" :inline="false">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username" placeholder="用户名"></el-input>
         </el-form-item>
@@ -86,7 +86,7 @@
           <el-input v-model="form.password" placeholder="密码"></el-input>
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
-          <el-input v-model="form.avatar" placeholder="密码"></el-input>
+          <ChooseImage v-model="form.avatar" />
         </el-form-item>
         <el-form-item label="所属角色" prop="role_id">
           <el-select v-model="form.role_id" placeholder="选择所属角色">
@@ -97,10 +97,8 @@
         <el-form-item label="状态" prop="status">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0">
           </el-switch>
-
         </el-form-item>
       </el-form>
-
     </FormDrawer>
 
   </el-card>
@@ -108,8 +106,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref } from 'vue'
 import FormDrawer from '@/components/FormDrawer.vue'
+import ChooseImage from '@/components/ChooseImage.vue'
 
 import {
   getManagerList,
@@ -118,139 +117,63 @@ import {
   updateManager,
   deleteManager
 } from '@/api/manager'
-
 import {
-  toast
-} from '@/composables/util'
+  useInitTable,
+  useInitForm
+} from '@/composables/useCommon'
 
-// 搜索数据
-const searchForm = reactive({
-  keyword: ''
-})
-const resetSearchForm = () => {
-  searchForm.keyword = ""
-  getData()
-}
+console.log(useInitForm);
 
 // 权限列表
 const roles = ref([])
 
-const tableData = ref([])
-const loading = ref(false)
-
-// 分页
-const currentPage = ref(1)
-const total = ref(0)
-const limit = ref(10)
-
-const getData = (p) => {
-  if (typeof p === "number") {
-    currentPage.value = p
-  }
-
-  loading.value = true
-  getManagerList(currentPage.value, searchForm).then(res => {
+const {
+  searchForm,
+  resetSearchForm,
+  tableData,
+  loading,
+  currentPage,
+  total,
+  limit,
+  getData,
+  handleDelete,
+  handleStatusChange,
+} = useInitTable({
+  searchForm: {
+    keyword: ""
+  },
+  getList: getManagerList,
+  onGetListSuccess: (res) => {
     tableData.value = res.list.map(o => {
       o.statusLoading = false
       return o
     })
     total.value = res.totalCount
     roles.value = res.roles
-  }).finally(() => {
-    loading.value = false
-  })
-}
-getData()
-
-// 发布公告
-// 表单部分
-const formDrawerRef = ref(null)
-const formRef = ref(null)
-// 提交数据
-const form = reactive({
-  username: '',
-  password: '',
-  role_id: null,
-  status: 1,
-  avatar: ''
+  },
+  delete: deleteManager,
+  updateStatus: updateManagerStatus
 })
-const rules = {}
 
-const editId = ref(0)
-const drawerTitle = computed(() => editId.value ? '修改' : '新增')
-
-// 提交数据
-const handleSubmit = () => {
-  formRef.value.validate((valid) => {
-    if (!valid) return
-
-    formDrawerRef.value.showLoading()
-
-    const fun = editId.value ? updateManager(editId.value, form) : createManager(form)
-
-    fun.then(res => {
-      toast(drawerTitle.value + "成功")
-      // 修改刷新当前页 新增刷新第一页
-      getData(editId.value ? false : 1)
-      formDrawerRef.value.close()
-    }).finally(() => {
-      formDrawerRef.value.hideLoading()
-    })
-  })
-}
-
-// 重置表单
-const resetForm = (row = false) => {
-  if (formRef.value) {
-    formRef.value.clearValidate()
-  }
-  if (row) {
-    for (const key in form) {
-      form[key] = row[key]
-    }
-  }
-}
-
-// 新增
-const handleCreate = () => {
-  editId.value = 0
-  resetForm({
+const {
+  formDrawerRef,
+  formRef,
+  form,
+  rules,
+  drawerTitle,
+  handleSubmit,
+  handleCreate,
+  handleEdit
+} = useInitForm({
+  form: {
     username: '',
     password: '',
     role_id: null,
     status: 1,
     avatar: ''
-  })
-  formDrawerRef.value.open()
-}
-
-// 编辑
-const handleEdit = (row) => {
-  editId.value = row.id
-  resetForm(row)
-  formDrawerRef.value.open()
-}
-
-// 删除功能
-const handleDelete = (id) => {
-  loading.value = true
-  deleteManager(id).then(res => {
-    toast('删除成功')
-    getData()
-  }).finally(() => {
-    loading.value = false
-  })
-}
-
-// 修改状态
-const handleStatusChange = (status, row) => {
-  row.statusLoading = true
-  updateManagerStatus(row.id, status).then(res => {
-    toast('修改状态成功')
-    row.status = status
-  }).finally(() => {
-    row.statusLoading = false
-  })
-}
-
+  },
+  getData,
+  update: updateManager,
+  create: createManager
+})
 </script>
