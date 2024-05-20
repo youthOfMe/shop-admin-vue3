@@ -40,7 +40,7 @@
         <el-form-item label="角色描述" prop="desc">
           <el-input v-model="form.desc" placeholder="角色描述" type="textarea" :rows="5"></el-input>
         </el-form-item>
-        <el-form-item label="角色描述" prop="desc">
+        <el-form-item label="状态" prop="desc">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0">
           </el-switch>
         </el-form-item>
@@ -50,7 +50,7 @@
 
     <!-- 权限配置 -->
     <FormDrawer ref="setRuleFormDrawerRef" title="权限配置" @submit="handleSetRuleSubmit">
-      <el-tree-v2 ref="elTreeRef" node-key="id" :check-strictly="checkStrictly"
+      <el-tree-v2 :check-strictly="checkStrictly" ref="elTreeRef" node-key="id"
         :default-expanded-keys="defaultExpandedKeys" :data="ruleList" :props="{ label: 'name', children: 'child' }"
         show-checkbox :height="treeHeight" @check="handleTreeCheck">
         <template #default="{ node, data }">
@@ -177,7 +177,7 @@ const handleSetRuleSubmit = () => {
 }
 
 const handleTreeCheck = (...e) => {
-  const { setCheckedKeys, halfCheckedKeys } = e[1]
+  const { checkedKeys, halfCheckedKeys } = e[1]
   ruleIds.value = [...checkedKeys, ...halfCheckedKeys]
 }
 
