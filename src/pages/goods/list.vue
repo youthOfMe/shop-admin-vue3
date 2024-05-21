@@ -72,7 +72,7 @@
             <div v-if="searchForm.tab !== 'delete'">
               <el-button class="px-1" type="primary" size="small" text @click="handleEdit(scope.row)">修改</el-button>
               <el-button class="px-1" type="primary" size="small" text>商品规格</el-button>
-              <el-button class="px-1" type="primary" size="small" text>设置轮播图</el-button>
+              <el-button class="px-1" type="primary" size="small" text @click="handleSetGoodsBanners(scope.row)">设置轮播图</el-button>
               <el-button class="px-1" type="primary" size="small" text>商品详情</el-button>
               <el-popconfirm title="是否要删除该商品?" confirmButtonText="确认" cancelButtonText="取消"
                 @confirm="handleDelete(scope.row.id)">
@@ -147,6 +147,8 @@
       </FormDrawer>
 
     </el-card>
+  
+    <banners ref="bannersRef"></banners>
   </div>
 </template>
 
@@ -157,6 +159,7 @@ import ListHeader from '@/components/ListHeader.vue'
 import ChooseImage from '@/components/ChooseImage.vue'
 import Search from '@/components/Search.vue'
 import SearchItem from '@/components/SearchItem.vue'
+import banners from './banners.vue'
 
 import {
   getGoodsList,
@@ -260,5 +263,9 @@ getCategoryList().then(res => {
   category_list.value = res
 })
 
-const showSearch = ref(false)
+// 设置轮播图
+const bannersRef = ref(null)
+const handleSetGoodsBanners = (row) => {
+  bannersRef.value.open(row)
+}
 </script>

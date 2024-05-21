@@ -12,7 +12,7 @@
         <div class="flex items-center justify-end">
           <el-button type="primary" @click="$emit('search')">搜索</el-button>
           <el-button @click="$emit('reset')">重置</el-button>
-          <el-button type="primary" text @click="showSearch = !showSearch" v-if="haiShowSearch">
+          <el-button type="primary" text @click="showSearch = !showSearch" v-if="hasShowSearch">
             {{showSearch ? '收起' : '展开'}}
             <el-icon>
               <ArrowUp v-if="showSearch" />
