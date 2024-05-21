@@ -70,9 +70,6 @@ import {
   deleteSkus,
   updateSkusStatus,
 } from '@/api/skus'
-import {
-  toast
-} from '@/composables/util'
 
 import {
   useInitTable,
