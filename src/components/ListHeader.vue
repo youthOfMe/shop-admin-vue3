@@ -5,9 +5,10 @@
       <el-popconfirm v-if="btns.includes('delete')" title="是否要删除选中规格?" confirmButtonText="确认" cancelButtonText="取消"
         @confirm="$emit('delete')">
         <template #reference>
-          <el-button type="primary" size="small">批量删除</el-button>
+          <el-button type="danger" size="small">批量删除</el-button>
         </template>
       </el-popconfirm>
+      <slot/>
     </div>
 
     <el-tooltip v-if="btns.includes('refresh')" effect="dark" content="刷新数据" placement="top">
