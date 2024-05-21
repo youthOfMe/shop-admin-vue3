@@ -16,18 +16,26 @@
       </el-table-column>
       <el-table-column label="优惠">
         <template #default="{ row }">
-          {{ row.type ? '满减' : '折扣' }} {{ row.type ? ('￥' + row.value) : (row.value + '折') }}
+          {{ row.type === 0 ? '满减' : '折扣' }} {{ row.type === 0 ? ('￥' + row.value) : (row.value + '折') }}
         </template>
       </el-table-column>
       <el-table-column prop="total" label="发放数量" />
       <el-table-column prop="used" label="已使用" />
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button type="primary" size="small" text @click="handleEdit(scope.row)">修改</el-button>
-          <el-popconfirm title="是否要删除该公告?" confirmButtonText="确认" cancelButtonText="取消"
-            @confirm="handleDelete(scope.row.id)">
+          <el-button v-if="scope.row.statusText !== '未开始'" type="primary" size="small" text
+            @click="handleEdit(scope.row)">修改</el-button>
+          <el-popconfirm v-if="scope.row.statusText !== '领取中'" title="是否要删除该优惠券?" confirmButtonText="确认"
+            cancelButtonText="取消" @confirm="handleDelete(scope.row.id)">
             <template #reference>
               <el-button type="primary" size="small" text>删除</el-button>
+            </template>
+          </el-popconfirm>
+
+          <el-popconfirm v-if="scope.row.statusText === '领取中'" title="是否要让该优惠券生效？" confirmButtonText="失效"
+            cancelButtonText="取消" @confirm="handleStatusChange(0, scope.row)">
+            <template #reference>
+              <el-button type="danger" size="small" text>失效</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -41,11 +49,38 @@
 
     <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
-        <el-form-item label="公告标题" prop="title">
-          <el-input v-model="form.title" placeholder="公告标题"></el-input>
+        <el-form-item label="优惠券名称" prop="title">
+          <el-input v-model="form.name" placeholder="优惠券名称"></el-input>
         </el-form-item>
-        <el-form-item label="公告内容" prop="content">
-          <el-input v-model="form.content" placeholder="公告内容" type="textarea" :rows="5"></el-input>
+        <el-form-item label="类型" prop="type">
+          <el-radio-group v-model="form.type" size="normal">
+            <el-radio-button :label="0">满减</el-radio-button>
+            <el-radio-button :label="1">折扣</el-radio-button>
+          </el-radio-group>
+
+        </el-form-item>
+        <el-form-item label="面值" prop="value">
+          <el-input v-model="form.value" placeholder="面值" style="width: 50%;">
+            <template #append>{{ form.type ? '折' : '元' }}</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="发行量" prop="total">
+          <el-input-number v-model="form.total" :min="1" :max="10000">
+          </el-input-number>
+        </el-form-item>
+        <el-form-item label="最低使用价格" prop="min_price">
+          <el-input v-model="form.min_price" placeholder="最低使用价格" type="number"></el-input>
+        </el-form-item>
+        <el-form-item label="排序" prop="order">
+          <el-input-number v-model="form.order" :min="0" :max="1000">
+          </el-input-number>
+        </el-form-item>
+        <el-form-item label="活动时间">
+          <el-date-picker :editable="false" v-model="timeRange" value-format="YYYY-MM-DD HH:mm:ss" type="datetimerange"
+            range-separator="To" start-placeholder="开始时间" end-placeholder="结束时间" />
+        </el-form-item>
+        <el-form-item label="描述" prop="desc">
+          <el-input v-model="form.desc" placeholder="优惠券描述" type="textarea" :rows="5"></el-input>
         </el-form-item>
       </el-form>
 
@@ -56,6 +91,9 @@
 </template>
 
 <script setup>
+import {
+  computed
+} from 'vue'
 import FormDrawer from '@/components/FormDrawer.vue'
 import ListHeader from '@/components/ListHeader.vue'
 import {
@@ -95,7 +133,8 @@ const {
   total,
   limit,
   getData,
-  handleDelete
+  handleDelete,
+  handleStatusChange
 } = useInitTable({
   getList: getCouponList,
   onGetListSuccess: (res) => {
@@ -106,7 +145,8 @@ const {
     })
     total.value = res.totalCount
   },
-  delete: deleteCoupon
+  delete: deleteCoupon,
+  updateStatus: updateCouponStatus
 })
 
 const {
@@ -121,30 +161,43 @@ const {
 } = useInitForm({
   form: {
     name: '',
-    type: 0
+    type: 0,
+    value: 0,
+    total: 100,
+    min_price: 0,
+    start_time: null,
+    end_time: null,
+    order: 50,
+    desc: ''
   },
   rules: {
-    title: [
-      {
-        required: true,
-        message: '公告标题不能为空',
-        trigger: 'blur'
-      }
-    ],
-    content: [
-      {
-        required: true,
-        message: '公告内容不能为空',
-        trigger: 'blur'
-      }
-    ]
+
   },
   getData,
   update: updateCoupon,
-  create: createCoupon
+  create: createCoupon,
+
+  beforeSubmit: (f) => {
+    if (typeof f.start_time != "number") {
+      f.start_time = (new Date(f.start_time)).getTime()
+    }
+    if (typeof f.end_time != "number") {
+      f.end_time = (new Date(f.end_time)).getTime()
+    }
+    return f
+  }
 })
 
-
+// 时间选择
+const timeRange = computed({
+  get() {
+    return form.start_time && form.end_time ? [form.start_time, form.end_time] : []
+  },
+  set(val) {
+    form.start_time = val[0]
+    form.end_time = val[1]
+  }
+})
 
 </script>
 

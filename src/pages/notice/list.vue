@@ -104,7 +104,9 @@ const {
   },
   getData,
   update: updateNotice,
-  create: createNotice
+  create: createNotice,
+
+
 })
 
 
