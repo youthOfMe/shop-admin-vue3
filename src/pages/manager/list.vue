@@ -1,21 +1,11 @@
 <template>
   <el-card shadow="never" class="border-0">
     <!-- 搜索 -->
-    <el-form :model="searchForm" label-width="80px" class="mb-3">
-      <el-row :gutter="20">
-        <el-col :span="8" :offset="0">
-          <el-form-item label="关键词">
-            <el-input v-model="searchForm.keyword" placeholder="管理员昵称" clearable></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8" :offset="8">
-          <div class="flex items-center justify-end">
-            <el-button type="primary" @click="getData">搜索</el-button>
-            <el-button @click="resetSearchForm">重置</el-button>
-          </div>
-        </el-col>
-      </el-row>
-    </el-form>
+    <Search @Search="getData" @reset="resetSearchForm" :model="searchForm">
+      <SearchItem label="关键词">
+        <el-input v-model="searchForm.keyword" placeholder="管理员昵称" clearable></el-input>
+      </SearchItem>
+    </Search>
 
     <!-- 新增|刷新 -->
     <ListHeader @create="handleCreate" @refresh="getData"></ListHeader>
@@ -100,6 +90,8 @@ import { ref } from 'vue'
 import FormDrawer from '@/components/FormDrawer.vue'
 import ListHeader from '@/components/ListHeader.vue'
 import ChooseImage from '@/components/ChooseImage.vue'
+import Search from '@/components/Search.vue'
+import SearchItem from '@/components/SearchItem.vue'
 
 import {
   getManagerList,
