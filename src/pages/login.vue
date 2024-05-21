@@ -45,11 +45,7 @@
 import { reactive, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex'
-import { login } from '@/api/manager'
 import { toast } from '@/composables/util'
-import {
-  setToken,
-} from '@/composables/auth'
 
 const store = useStore()
 const router = useRouter()
