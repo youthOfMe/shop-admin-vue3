@@ -13,10 +13,28 @@
               <el-input v-model="searchForm.title" placeholder="商品昵称" clearable></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8" :offset="8">
+          <el-col :span="8" :offset="0" v-if="showSearch">
+            <el-form-item label="商品分类" prop=category_id>
+              <el-select v-model="searchForm.category_id" placeholder="请选择商品分类" clearable>
+                <el-option v-for="item in category_list"
+                  :key="item.vid"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" :offset="showSearch ? 0 : 8">
             <div class="flex items-center justify-end">
               <el-button type="primary" @click="getData">搜索</el-button>
               <el-button @click="resetSearchForm">重置</el-button>
+              <el-button type="primary" text @click="showSearch = !showSearch">
+                {{showSearch ? '收起' : '展开'}}
+                <el-icon>
+                  <ArrowUp v-if="showSearch" />
+                  <ArrowDown v-else />
+                </el-icon>
+              </el-button>
             </div>
           </el-col>
         </el-row>
@@ -27,7 +45,7 @@
 
       <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
         <el-table-column label="商品">
-          <template #default="{ row }">
+          <template #default="{ row }"> 
             <div class="flex">
               <el-image class="mr-3 rounded" :src="row.cover" fit="fill" :lazy="true"
                 style="width: 50px; height: 50px;"></el-image>
@@ -126,6 +144,10 @@ import {
   deleteGoods
 } from '@/api/goods'
 import {
+  getCategoryList
+} from '@/api/category'
+
+import {
   useInitTable,
   useInitForm
 } from '@/composables/useCommon'
@@ -204,4 +226,12 @@ const tabbars = [{
   key: 'delete',
   name: '回收站'
 },]
+
+// 商品分类
+const category_list = ref([])
+getCategoryList().then(res => {
+  category_list.value = res
+})
+
+const showSearch = ref(false)
 </script>
