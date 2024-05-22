@@ -32,3 +32,11 @@ export function readGoods(id) {
 export function setGoodsBanners(id, data) {
   return axios.post(`/admin/goods/banners/${id}`, data)
 }
+
+export function updateGoodsSkus(id, data) {
+  return axios.post(`/admin/goods/updateskus/${id}`, data)
+}
+
+export function createGoodsSkusCard(id, data) {
+  return axios.post(`/admin/goods/updateskus/${id}`, data)
+}
