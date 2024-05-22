@@ -2,8 +2,13 @@ import { ref } from 'vue'
 import {
   createGoodsSkusCard,
   updateGoodsSkusCard,
-  deleteGoodsSkusCard
+  deleteGoodsSkusCard,
+  sortGoodsSkusCard
 } from '@/api/goods'
+import {
+  useArrayMoveUp,
+  useArrayMoveDown
+} from '@/composables/util'
 
 // 当前商品ID
 export const goodsId = ref(0)
@@ -70,6 +75,30 @@ export function handleDelete(item) {
     if (index !== -1) {
       sku_card_list.value.splice(index, 1)
     }
+  })
+}
+
+// 排序规格选项
+export const bodyLoading = ref(false)
+export function sortCard(action, index) {
+  let oList = JSON.parse(JSON.stringify(sku_card_list.value))
+  const func = action === "up" ? useArrayMoveUp : useArrayMoveDown
+  func(oList, index)
+
+  const sortData = oList.map((object, index) => {
+    return {
+      id: object.id,
+      order: index + 1
+    }
+  })
+
+  bodyLoading.value = true
+  sortGoodsSkusCard({
+    sortdata: sortData
+  }).then(res => {
+    func(sku_card_list.value, index)
+  }).finally(() => {
+    bodyLoading.value = false
   })
 }
 
