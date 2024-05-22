@@ -1,13 +1,15 @@
 <template>
-  <el-tag class="mr-2" v-for="(tag, index) in item.goodsSkusCardValue" :key="index" closable
-    :disable-transitions="false" @close="handleClose(tag)" effect="plain">
-    {{ tag.text }}
-  </el-tag>
-  <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="w-20" size="small"
-    @keyup.enter="handleInputConfirm" @blur="handleInputConfirm" />
-  <el-button v-else class="button-new-tag" size="small" @click="showInput">
-    + New Tag
-  </el-button>
+  <div v-loading="loading">
+    <el-tag class="mr-2" v-for="(tag, index) in item.goodsSkusCardValue" :key="index" closable
+      :disable-transitions="false" @close="handleClose(tag)" effect="plain">
+      {{ tag.text }}
+    </el-tag>
+    <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="w-20" size="small"
+      @keyup.enter="handleInputConfirm" @blur="handleInputConfirm" />
+    <el-button v-else class="button-new-tag" size="small" @click="showInput">
+      + 添加选项值
+    </el-button>
+  </div>
 </template>
 
 <script setup>
@@ -27,7 +29,8 @@ const {
   InputRef,
   handleClose,
   showInput,
-  handleInputConfirm
+  handleInputConfirm,
+  loading
 } = initSkusCardItem(props.skuCardId)
 
 </script>
