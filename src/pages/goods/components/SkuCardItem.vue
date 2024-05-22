@@ -2,7 +2,8 @@
   <div v-loading="loading">
     <el-tag class="mr-2" v-for="(tag, index) in item.goodsSkusCardValue" :key="index" closable
       :disable-transitions="false" @close="handleClose(tag)" effect="plain">
-      {{ tag.text }}
+      <el-input class="w-20 ml-[-10px]" v-model="tag.text" placeholder="选项值" size="small"
+        @change="handleChange($event, tag)"></el-input>
     </el-tag>
     <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="w-20" size="small"
       @keyup.enter="handleInputConfirm" @blur="handleInputConfirm" />
@@ -30,7 +31,8 @@ const {
   handleClose,
   showInput,
   handleInputConfirm,
-  loading
+  loading,
+  handleChange
 } = initSkusCardItem(props.skuCardId)
 
 </script>
