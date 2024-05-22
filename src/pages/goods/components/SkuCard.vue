@@ -54,13 +54,13 @@ import {
   handleDelete,
   sortCard,
   bodyLoading,
-  handleChooseGoodsSkusCard
+  handleChooseSetGoodsSkusCard
 } from '@/composables/useSku'
 
 const ChooseSkuRef = ref(null)
 const handleChooseSku = (item) => {
   ChooseSkuRef.value.open((value) => {
-    handleChooseGoodsSkusCard(item.id, {
+    handleChooseSetGoodsSkusCard(item.id, {
       name: value.name,
       value: value.list
     })
