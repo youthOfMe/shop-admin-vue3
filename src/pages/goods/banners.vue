@@ -2,13 +2,13 @@
   <el-drawer title="设置轮播图" v-model="dialogVisible" direction="rtl" size="50%" :destroy-on-close="true">
     <el-form :model="form" label-width="80px">
       <el-form-item label="轮播图">
-        <ChooseImage v-model=form.banners></ChooseImage>
+        <ChooseImage :limit="9" v-model="form.banners"></ChooseImage>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit">提交</el-button>
       </el-form-item>
     </el-form>
-    
+
   </el-drawer>
 </template>
 
@@ -45,4 +45,3 @@ defineExpose({
   open
 })
 </script>
-  
