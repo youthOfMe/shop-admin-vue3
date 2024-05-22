@@ -74,7 +74,10 @@
               <el-button class="px-1" type="primary" size="small" text>商品规格</el-button>
               <el-button class="px-1" :type="scope.row.goods_banner.length === 0 ? 'danger' : 'primary'" size="small"
                 text @click="handleSetGoodsBanners(scope.row)" :loading="scope.row.bannersLoading">设置轮播图</el-button>
-              <el-button class="px-1" type="primary" size="small" text>商品详情</el-button>
+              <el-button class="px-1" type="primary" size="small" text @click="handleSetGoodsContent(scope.row)"
+                :loading="scope.row.contentLoading"
+                :type="!(scope.row.content) === 0 ? 'danger' : 'primary'">商品详情</el-button>
+
               <el-popconfirm title="是否要删除该商品?" confirmButtonText="确认" cancelButtonText="取消"
                 @confirm="handleDelete(scope.row.id)">
                 <template #reference>
@@ -150,6 +153,7 @@
     </el-card>
 
     <banners ref="bannersRef" @reload-data="getData"></banners>
+    <content ref="contentRef" @reload-data="getData"></content>
   </div>
 </template>
 
@@ -161,6 +165,7 @@ import ChooseImage from '@/components/ChooseImage.vue'
 import Search from '@/components/Search.vue'
 import SearchItem from '@/components/SearchItem.vue'
 import banners from './banners.vue'
+import content from './content.vue'
 
 import {
   getGoodsList,
@@ -202,6 +207,7 @@ const {
   onGetListSuccess: (res) => {
     tableData.value = res.list.map(o => {
       o.bannersLoading = false
+      o.contentLoading = false
       return o
     })
     total.value = res.totalCount
@@ -268,5 +274,11 @@ getCategoryList().then(res => {
 const bannersRef = ref(null)
 const handleSetGoodsBanners = (row) => {
   bannersRef.value.open(row)
+}
+
+// 设置商品详情
+const contentRef = ref(null)
+const handleSetGoodsContent = (row) => {
+  contentRef.value.open(row)
 }
 </script>
