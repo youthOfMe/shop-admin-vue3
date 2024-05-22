@@ -14,12 +14,9 @@
         <template #show>
           <SearchItem>
             <el-select v-model="searchForm.category_id" placeholder="请选择商品分类" clearable>
-                <el-option v-for="item in category_list"
-                  :key="item.vid"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+              <el-option v-for="item in category_list" :key="item.vid" :label="item.name" :value="item.id">
+              </el-option>
+            </el-select>
           </SearchItem>
         </template>
       </Search>
@@ -27,14 +24,17 @@
 
       <!-- 新增|刷新 -->
       <ListHeader layout="create,delete,refresh" @create="handleCreate" @refresh="getData" @delete="handleMultiDelete">
-        <el-button size="small" @click="handleMultiStatusChange(1)" v-if="searchForm.tab === 'all' || searchForm.tab === 'off'">上架</el-button>
-        <el-button size="small" @click="handleMultiStatusChange(0)" v-if="searchForm.tab === 'all' || searchForm.tab === 'saling'">下架</el-button>
+        <el-button size="small" @click="handleMultiStatusChange(1)"
+          v-if="searchForm.tab === 'all' || searchForm.tab === 'off'">上架</el-button>
+        <el-button size="small" @click="handleMultiStatusChange(0)"
+          v-if="searchForm.tab === 'all' || searchForm.tab === 'saling'">下架</el-button>
       </ListHeader>
 
-      <el-table ref="multiSelectionIds" @selection-change="handleSelectionChange" :data="tableData" stripe style="width: 100%" v-loading="loading">
+      <el-table ref="multiSelectionIds" @selection-change="handleSelectionChange" :data="tableData" stripe
+        style="width: 100%" v-loading="loading">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="商品">
-          <template #default="{ row }"> 
+          <template #default="{ row }">
             <div class="flex">
               <el-image class="mr-3 rounded" :src="row.cover" fit="fill" :lazy="true"
                 style="width: 50px; height: 50px;"></el-image>
@@ -72,7 +72,8 @@
             <div v-if="searchForm.tab !== 'delete'">
               <el-button class="px-1" type="primary" size="small" text @click="handleEdit(scope.row)">修改</el-button>
               <el-button class="px-1" type="primary" size="small" text>商品规格</el-button>
-              <el-button class="px-1" type="primary" size="small" text @click="handleSetGoodsBanners(scope.row)">设置轮播图</el-button>
+              <el-button class="px-1" :type="scope.row.goods_banner.length === 0 ? 'danger' : 'primary'" size="small"
+                text @click="handleSetGoodsBanners(scope.row)" :loading="scope.row.bannersLoading">设置轮播图</el-button>
               <el-button class="px-1" type="primary" size="small" text>商品详情</el-button>
               <el-popconfirm title="是否要删除该商品?" confirmButtonText="确认" cancelButtonText="取消"
                 @confirm="handleDelete(scope.row.id)">
@@ -147,8 +148,8 @@
       </FormDrawer>
 
     </el-card>
-  
-    <banners ref="bannersRef"></banners>
+
+    <banners ref="bannersRef" @reload-data="getData"></banners>
   </div>
 </template>
 
@@ -200,7 +201,7 @@ const {
   getList: getGoodsList,
   onGetListSuccess: (res) => {
     tableData.value = res.list.map(o => {
-      o.statusLoading = false
+      o.bannersLoading = false
       return o
     })
     total.value = res.totalCount

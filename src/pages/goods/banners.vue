@@ -5,7 +5,7 @@
         <ChooseImage :limit="9" v-model="form.banners"></ChooseImage>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submit">提交</el-button>
+        <el-button type="primary" @click="submit" :loading="loading">提交</el-button>
       </el-form-item>
     </el-form>
 
@@ -20,6 +20,7 @@ import {
   readGoods,
   setGoodsBanners
 } from '@/api/goods'
+import { toast } from '@/composables/util'
 
 const dialogVisible = ref(false)
 
@@ -30,15 +31,27 @@ const form = reactive({
 const goodsId = ref(0)
 const open = (row) => {
   goodsId.value = row.id
+  row.bannersLoading = true
   readGoods(goodsId.value).then(res => {
     form.banners = res.goodsBanner.map(o => o.url)
     dialogVisible.value = true
+  }).finally(() => {
+    row.bannersLoading = false
   })
 
 }
 
+const emit = defineEmits(["reloadData"])
+const loading = ref(false)
 const submit = () => {
-
+  loading.value = true
+  setGoodsBanners(goodsId.value, form).then(res => {
+    toast('设置轮播图成功')
+    dialogVisible.value = false
+    emit("reloadData")
+  }).finally(() => {
+    loading.value = false
+  })
 }
 
 defineExpose({
