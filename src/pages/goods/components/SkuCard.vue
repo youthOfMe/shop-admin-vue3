@@ -1,6 +1,7 @@
 <template>
   <el-form-item label="规格选项">
-    <el-card shadow="never" class="w-full mb-3" v-for="(item, index) in sku_card_list" :key="item.id">
+    <el-card shadow="never" class="w-full mb-3" v-for="(item, index) in sku_card_list" :key="item.id"
+      v-loading="item.loading">
       <template #header>
         <div class="flex items-center">
           <el-input v-model="item.text" placeholder="规格名称" style="width: 200px;" class="mr-2"
@@ -35,6 +36,7 @@ import SkuCardItem from './SkuCardItem.vue'
 import {
   sku_card_list,
   addSkuCardEvent,
-  btnLoading
+  btnLoading,
+  handleUpdate
 } from '@/composables/useSku'
 </script>

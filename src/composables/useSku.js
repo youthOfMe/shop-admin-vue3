@@ -46,7 +46,19 @@ export function addSkuCardEvent() {
 
 // 修改规格选项
 export function handleUpdate(item) {
-  console.log(item)
+  item.loading = true
+  updateGoodsSkusCard(item.id, {
+    goods_id: item.goods_id,
+    name: item.text,
+    order: item.order,
+    type: 0
+  }).then(res => {
+    item.name = item.text
+  }).catch(err => {
+    item.text = item.name
+  }).finally(() => {
+    item.loading = false
+  })
 }
 
 // 初始化规格的值
