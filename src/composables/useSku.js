@@ -6,7 +6,8 @@ import {
   sortGoodsSkusCard,
   createGoodsSkusCardValue,
   updateGoodsSkusCardValue,
-  deleteGoodsSkusCardValue
+  deleteGoodsSkusCardValue,
+  chooseAndSetGoodsSkusCard
 } from '@/api/goods'
 import {
   useArrayMoveUp,
@@ -102,6 +103,15 @@ export function sortCard(action, index) {
     func(sku_card_list.value, index)
   }).finally(() => {
     bodyLoading.value = false
+  })
+}
+
+// 选择设置规格
+export function handleChooseSetGoodsSkusCard(id, data) {
+  chooseAndSetGoodsSkusCard(id, data).then(res => {
+    console.log(res)
+  }).finally(() => {
+
   })
 }
 

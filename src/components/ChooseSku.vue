@@ -65,7 +65,9 @@ const {
   }
 })
 
-const open = () => {
+const callbackFunction = ref(null)
+const open = (callback = null) => {
+  callbackFunction.value = callback
   getData(1)
   dialogVisible.value = true
 }
@@ -73,6 +75,7 @@ const open = () => {
 const list = ref([])
 
 const form = reactive({
+  name: '',
   list: []
 })
 
@@ -82,12 +85,16 @@ function handleChangeActiveId(id) {
   const item = tableData.value.find(o => o.id === id)
   if (item) {
     list.value = item.default.split(",")
+    form.name = item.name
   }
 }
 
 // 提交
 const submit = () => {
-
+  if (typeof callbackFunction.value === 'function') {
+    callbackFunction.value(form)
+  }
+  dialogVisible.value = false
 }
 
 defineExpose({
