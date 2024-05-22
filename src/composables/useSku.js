@@ -1,7 +1,8 @@
 import { ref } from 'vue'
 import {
   createGoodsSkusCard,
-  updateGoodsSkusCard
+  updateGoodsSkusCard,
+  deleteGoodsSkusCard
 } from '@/api/goods'
 
 // 当前商品ID
@@ -58,6 +59,17 @@ export function handleUpdate(item) {
     item.text = item.name
   }).finally(() => {
     item.loading = false
+  })
+}
+
+// 删除规格选项
+export function handleDelete(item) {
+  item.loading = true
+  deleteGoodsSkusCard(item.id).then(res => {
+    const index = sku_card_list.value.findIndex(o => o.id === item.id)
+    if (index !== -1) {
+      sku_card_list.value.splice(index, 1)
+    }
   })
 }
 
