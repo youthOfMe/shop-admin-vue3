@@ -105,7 +105,38 @@ export function sortCard(action, index) {
 // 初始化规格的值
 export function initSkusCardItem(id) {
   const item = sku_card_list.value.find(o => o.id === id)
+
+  const inputValue = ref('')
+  const dynamicTags = ref(['Tag 1', 'Tag 2', 'Tag 3'])
+  const inputVisible = ref(false)
+  const InputRef = ref()
+
+  const handleClose = (tag) => {
+    dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1)
+  }
+
+  const showInput = () => {
+    inputVisible.value = true
+    nextTick(() => {
+      InputRef.value.input.focus()
+    })
+  }
+
+  const handleInputConfirm = () => {
+    if (inputValue.value) {
+      dynamicTags.value.push(inputValue.value)
+    }
+    inputVisible.value = false
+    inputValue.value = ''
+  }
+
   return {
-    item
+    item,
+    inputValue,
+    inputVisible,
+    InputRef,
+    handleClose,
+    showInput,
+    handleInputConfirm
   }
 }

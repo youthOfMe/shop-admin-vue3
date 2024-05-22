@@ -1,10 +1,17 @@
 <template>
-  <div v-for="(tag, index) in item.goodsSkusCardValue" :key="index">
+  <el-tag class="mr-2" v-for="(tag, index) in item.goodsSkusCardValue" :key="index" closable
+    :disable-transitions="false" @close="handleClose(tag)" effect="plain">
     {{ tag.text }}
-  </div>
+  </el-tag>
+  <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="w-20" size="small"
+    @keyup.enter="handleInputConfirm" @blur="handleInputConfirm" />
+  <el-button v-else class="button-new-tag" size="small" @click="showInput">
+    + New Tag
+  </el-button>
 </template>
 
 <script setup>
+import { nextTick, ref } from 'vue'
 import {
   initSkusCardItem
 } from '@/composables/useSku'
@@ -14,6 +21,13 @@ const props = defineProps({
 })
 
 const {
-  item
+  item,
+  inputValue,
+  inputVisible,
+  InputRef,
+  handleClose,
+  showInput,
+  handleInputConfirm
 } = initSkusCardItem(props.skuCardId)
+
 </script>
