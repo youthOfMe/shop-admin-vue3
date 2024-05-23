@@ -40,6 +40,7 @@
       </template>
       <template v-else>
         <SkuCard></SkuCard>
+        <SkuTable></SkuTable>
       </template>
     </el-form>
   </FormDrawer>
@@ -50,9 +51,12 @@
 import { ref, reactive } from 'vue'
 import FormDrawer from '@/components/FormDrawer.vue'
 import SkuCard from './components/SkuCard.vue'
+import SkuTable from './components/SkuTable.vue'
+
 import {
   goodsId,
-  initSkuCardList
+  initSkuCardList,
+  sku_list
 } from '@/composables/useSku.js'
 import {
   readGoods,
@@ -98,7 +102,15 @@ const open = (row) => {
 const emit = defineEmits(["reloadData"])
 const submit = () => {
   formDrawerRef.value.showLoading()
-  updateGoodsSkus(goodsId.value, form).then(res => {
+  const data = {
+    sku_type: form.sku_type,
+    sku_value: form.sku_value,
+  }
+  if (form.sku_type === 1) {
+    data.goodsSkus = sku_list.value
+  }
+
+  updateGoodsSkus(goodsId.value, data).then(res => {
     toast('设置商品规格成功')
     formDrawerRef.value.close()
     emit("reloadData")

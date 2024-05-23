@@ -93,6 +93,7 @@ function handleChangeActiveId(id) {
 const submit = () => {
   if (typeof callbackFunction.value === 'function') {
     callbackFunction.value(form)
+    form.list = []
   }
   dialogVisible.value = false
 }
