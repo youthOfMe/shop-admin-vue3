@@ -9,7 +9,7 @@ export function createRule(data) {
 }
 
 export function updateRule(id, data) {
-  return axios.post(`/admin/notice/${id}`, data)
+  return axios.post(`/admin/rule/${id}`, data)
 }
 
 export function updateRuleStatus(id, status) {
