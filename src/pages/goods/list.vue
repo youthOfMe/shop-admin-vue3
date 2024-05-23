@@ -23,7 +23,19 @@
 
 
       <!-- 新增|刷新 -->
-      <ListHeader layout="create,delete,refresh" @create="handleCreate" @refresh="getData" @delete="handleMultiDelete">
+      <ListHeader layout="create,refresh" @create="handleCreate" @refresh="getData" @delete="handleMultiDelete">
+        <el-button type="danger" size="small" @click="handleMultiDelete"
+          v-if="searchForm.tab !== 'delete'">批量删除</el-button>
+        <el-button type="warning" size="small" @click="handleRestoreGoods" v-else>恢复商品</el-button>
+
+        <el-popconfirm v-if="searchForm.tab === 'delete'" title="是否要彻底删除该商品?" confirmButtonText="确认"
+          cancelButtonText="取消" @confirm="handleDestoryGoods">
+          <template #reference>
+            <el-button type="danger" size="small">彻底删除</el-button>
+          </template>
+        </el-popconfirm>
+
+
         <el-button size="small" @click="handleMultiStatusChange(1)"
           v-if="searchForm.tab === 'all' || searchForm.tab === 'off'">上架</el-button>
         <el-button size="small" @click="handleMultiStatusChange(0)"
@@ -85,7 +97,7 @@
                 :type="!(scope.row.content) === 0 ? 'danger' : 'primary'">商品详情</el-button>
 
               <el-popconfirm title="是否要删除该商品?" confirmButtonText="确认" cancelButtonText="取消"
-                @confirm="handleDelete(scope.row.id)">
+                @confirm="handleDelete([scope.row.id])">
                 <template #reference>
                   <el-button class="px-1" type="primary" size="small" text>删除</el-button>
                 </template>
@@ -181,7 +193,9 @@ import {
   updateGoodsStatus,
   createGoods,
   updateGoods,
-  deleteGoods
+  deleteGoods,
+  restoreGoods,
+  destoryGoods
 } from '@/api/goods'
 import {
   getCategoryList
@@ -191,6 +205,10 @@ import {
   useInitTable,
   useInitForm
 } from '@/composables/useCommon'
+
+import {
+  toast
+} from '@/composables/util'
 
 const {
   searchForm,
@@ -203,9 +221,11 @@ const {
   getData,
   handleDelete,
   handleSelectionChange,
-  multipleTableRef,
   handleMultiDelete,
-  handleMultiStatusChange
+  handleMultiStatusChange,
+
+  multiSelectionIds,
+  multipleTableRef
 } = useInitTable({
   searchForm: {
     title: '',
@@ -296,5 +316,27 @@ const handleSetGoodsContent = (row) => {
 const skusRef = ref(null)
 const handleSetGoodsSkus = (row) => {
   skusRef.value.open(row)
+}
+
+const handleRestoreGoods = () => {
+  useMultiAction(restoreGoods, "恢复成功")
+}
+
+const handleDestoryGoods = () => {
+  useMultiAction(destoryGoods, "彻底删除成功")
+}
+
+function useMultiAction(func, msg) {
+  loading.value = true
+  func(multiSelectionIds.value).then(res => {
+    toast(msg)
+    // 清空选中
+    if (multipleTableRef.value) {
+      multipleTableRef.value.clearSelection()
+    }
+    getData()
+  }).finally(() => {
+    loading.value = false
+  })
 }
 </script>
