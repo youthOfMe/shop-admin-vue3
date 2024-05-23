@@ -12,8 +12,11 @@
       <el-table-column prop="name" label="商品名称" width="180"></el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="{ row }">
-          <el-button type="primary" text size="small">删除</el-button>
-
+          <el-popconfirm title="是否要删除该记录?" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(row)">
+            <template #reference>
+              <el-button :loading="row.loading" type="primary" size="small" text>删除</el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -24,9 +27,13 @@
 <script setup>
 import { ref } from 'vue'
 import FormDrawer from '@/components/FormDrawer.vue'
+import {
+  toast
+} from '@/composables/util'
 
 import {
-  getCategoryGoods
+  getCategoryGoods,
+  deleteCategoryGoods
 } from '@/api/category'
 
 const formDrawerRef = ref(null)
@@ -35,14 +42,28 @@ const tableData = ref([])
 
 const open = (item) => {
   category_id.value = item.id
+  item.goodsDrawerLoading = true
   getData().then(res => {
     formDrawerRef.value.open()
+  }).finally(() => {
+    item.goodsDrawerLoading = false
   })
 }
 
 function getData() {
   return getCategoryGoods(category_id.value).then(res => {
-    tableData.value = res
+    tableData.value = res.map(o => {
+      o.loading = false
+      return o
+    })
+  })
+}
+
+const handleDelete = (row) => {
+  row.loading = true
+  deleteCategoryGoods(row.id).then(res => {
+    toast('删除成功')
+    getData()
   })
 }
 
