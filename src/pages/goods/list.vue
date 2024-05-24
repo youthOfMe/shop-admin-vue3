@@ -223,7 +223,6 @@ const {
   handleSelectionChange,
   handleMultiDelete,
   handleMultiStatusChange,
-
   multiSelectionIds,
   multipleTableRef
 } = useInitTable({
