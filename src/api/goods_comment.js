@@ -3,7 +3,7 @@ import { queryParams } from '@/composables/util'
 
 export function getGoodsCommentList(page, query = {}) {
   const r = queryParams(query)
-  return axios.get(`/admin/manager/${page}${r}`)
+  return axios.get(`/admin/goods_comment/${page}${r}`)
 }
 
 export function updateGoodsCommentStatus(id, status) {

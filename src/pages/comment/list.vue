@@ -7,44 +7,66 @@
       </SearchItem>
     </Search>
 
-    <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
-      <el-table-column label="管理员">
+    <el-table default-expand-all :data="tableData" stripe style="width: 100%" v-loading="loading">
+
+      <el-table-column type="expand">
         <template #default="{ row }">
-          <div class="flex items-center">
-            <el-avatar :size="40" :src="row.avatar">
-              <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
-            </el-avatar>
-            <div class="ml-3">
-              <h6>{{ row.username }}</h6>
-              <small>ID: {{ row.id }}</small>
+          <div class="flex pl-18">
+            <el-avatar :size="50" :src="row.user.avatar" fit="fill" class="mr-3"></el-avatar>
+            <div class="flex-1">
+              <h6 class="flex items-center">
+                {{ row.user.nickname || row.user.username }}
+                <small class="text-gray-400 ml-2">{{ row.review_time }}</small>
+                <el-button size="small" class="ml-auto">回复</el-button>
+              </h6>
+              {{ row.review.data }}
+              <div class="py-2">
+                <el-image v-for="(item, index) in row.review.image" :key="index" :src="item" fit="cover" :lazy="true"
+                  style="width: 100px;" class="rounded"></el-image>
+              </div>
+
+              <div class="mt-3 bg-gray-100 p-3 rounded" v-for="(item, index) in row.extra" :key="index">
+                <h6 class="flex font-bold">
+                  客服
+                  <el-button type="info" size="small" class="ml-auto">修改</el-button>
+                </h6>
+                <p>{{ item.data }}</p>
+              </div>
+
             </div>
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="所属管理员" align="center">
+
+      <el-table-column label="ID" width="70" align="center" prop="id"></el-table-column>
+      <el-table-column label="商品" width="200">
         <template #default="{ row }">
-          {{ row.role?.name || '-' }}
+          <div class="flex items-center">
+            <el-image :src="row.goods_item ? row.goods_item.cover : ''" fit="fill" :lazy="true"
+              style="width: 50px; height: 50px;" class="rounded"></el-image>
+            <div class="ml-3">
+              <h6>{{ row.goods_item?.title ?? '商品已被删除' }}</h6>
+            </div>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="120">
+      <el-table-column label="评价信息" width="200">
+        <template #default="{ row }">
+          <div>
+            <p>用户: {{ row.user?.nickname || row.user?.username }}</p>
+            <p>
+              <el-rate v-model="row.rating" disabled show-score text-color="#ff9900" score-template="{value} points">
+              </el-rate>
+            </p>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="评价时间" width="180" align="center" prop="review_time"></el-table-column>
+      <el-table-column label="状态">
         <template #default="{ row }">
           <el-switch :modelValue="row.status" :active-value="1" :inactive-value="0"
             @change="handleStatusChange($event, row)" :loading="row.statusLoading" :disabled="row.super === 1">
           </el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作">
-        <template #default="scope">
-          <small v-if="scope.row.super === 1" class="text-sm text-gray-500">暂无操作</small>
-          <div v-else>
-            <el-button type="primary" size="small" text @click="handleEdit(scope.row)">修改</el-button>
-            <el-popconfirm title="是否要删除该管理员?" confirmButtonText="确认" cancelButtonText="取消"
-              @confirm="handleDelete(scope.row.id)">
-              <template #reference>
-                <el-button type="primary" size="small" text>删除</el-button>
-              </template>
-            </el-popconfirm>
-          </div>
         </template>
       </el-table-column>
     </el-table>
