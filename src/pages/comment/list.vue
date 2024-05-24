@@ -7,7 +7,7 @@
       </SearchItem>
     </Search>
 
-    <el-table default-expand-all :data="tableData" stripe style="width: 100%" v-loading="loading">
+    <el-table :default-expand-all="false" :data="tableData" stripe style="width: 100%" v-loading="loading">
 
       <el-table-column type="expand">
         <template #default="{ row }">
@@ -17,7 +17,8 @@
               <h6 class="flex items-center">
                 {{ row.user.nickname || row.user.username }}
                 <small class="text-gray-400 ml-2">{{ row.review_time }}</small>
-                <el-button size="small" class="ml-auto">回复</el-button>
+                <el-button size="small" class="ml-auto" @click="openTextarea(row)"
+                  v-if="!row.textareaEdit && !row.extra">回复</el-button>
               </h6>
               {{ row.review.data }}
               <div class="py-2">
@@ -25,13 +26,24 @@
                   style="width: 100px;" class="rounded"></el-image>
               </div>
 
-              <div class="mt-3 bg-gray-100 p-3 rounded" v-for="(item, index) in row.extra" :key="index">
-                <h6 class="flex font-bold">
-                  客服
-                  <el-button type="info" size="small" class="ml-auto">修改</el-button>
-                </h6>
-                <p>{{ item.data }}</p>
+              <div v-if="row.textareaEdit">
+                <el-input v-model="textarea" placeholder="请输入评价内容" type="textarea" :row="2"></el-input>
+                <div class="py-2">
+                  <el-button type="primary" size="default" @click="review(row)">回复</el-button>
+                  <el-button size="small" class="ml-2" @click="row.textareaEdit = false">取消</el-button>
+                </div>
               </div>
+
+              <template v-else>
+                <div class="mt-3 bg-gray-100 p-3 rounded" v-for="(item, index) in row.extra" :key="index">
+                  <h6 class="flex font-bold">
+                    客服
+                    <el-button type="info" size="small" class="ml-auto"
+                      @click="openTextarea(row, item.data)">修改</el-button>
+                  </h6>
+                  <p>{{ item.data }}</p>
+                </div>
+              </template>
 
             </div>
           </div>
@@ -84,10 +96,14 @@
 import { ref } from 'vue'
 import Search from '@/components/Search.vue'
 import SearchItem from '@/components/SearchItem.vue'
+import {
+  toast
+} from '@/composables/util'
 
 import {
   getGoodsCommentList,
   updateGoodsCommentStatus,
+  reviewGoodsComment
 } from '@/api/goods_comment'
 import {
   useInitTable,
@@ -115,6 +131,7 @@ const {
   onGetListSuccess: (res) => {
     tableData.value = res.list.map(o => {
       o.statusLoading = false
+      o.textareaEdit = false
       return o
     })
     total.value = res.totalCount
@@ -122,4 +139,21 @@ const {
   },
   updateStatus: updateGoodsCommentStatus
 })
+
+const textarea = ref('')
+const openTextarea = (row, data = '') => {
+  textarea.value = data
+  row.textareaEdit = true
+}
+
+const review = (row) => {
+  if (textarea.value === '') {
+    return toast('回复内容不能为空', 'error')
+  }
+  reviewGoodsComment(row.id, textarea.value).then(res => {
+    row.textareaEdit = false
+    toast('回复成功')
+    getData()
+  })
+}
 </script>
