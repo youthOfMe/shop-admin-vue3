@@ -45,7 +45,7 @@
       <el-table ref="multiSelectionIds" @selection-change="handleSelectionChange" :data="tableData" stripe
         style="width: 100%" v-loading="loading">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="商品">
+        <el-table-column label="商品" width="300">
           <template #default="{ row }">
             <div class="flex">
               <el-image class="mr-3 rounded" :src="row.cover" fit="fill" :lazy="true"
