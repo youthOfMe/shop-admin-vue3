@@ -8,16 +8,26 @@
           <el-button type="danger" size="small">批量删除</el-button>
         </template>
       </el-popconfirm>
-      <slot/>
+      <slot />
     </div>
 
-    <el-tooltip v-if="btns.includes('refresh')" effect="dark" content="刷新数据" placement="top">
-      <el-button text @click="$emit('refresh')">
-        <el-icon :size="20">
-          <Refresh></Refresh>
-        </el-icon>
-      </el-button>
-    </el-tooltip>
+    <div>
+      <el-tooltip v-if="btns.includes('refresh')" effect="dark" content="刷新数据" placement="top">
+        <el-button size="small" text @click="$emit('refresh')">
+          <el-icon :size="15">
+            <Refresh></Refresh>
+          </el-icon>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip v-if="btns.includes('download')" effect="dark" content="导出数据" placement="top">
+        <el-button size="small" text @click="$emit('download')">
+          <el-icon :size="15">
+            <Download />
+          </el-icon>
+        </el-button>
+      </el-tooltip>
+    </div>
+
   </div>
 </template>
 
@@ -32,5 +42,5 @@ const props = defineProps({
 
 const btns = computed(() => props.layout.split(','))
 
-defineEmits(['create', 'refresh', 'delete'])
+defineEmits(['create', 'refresh', 'delete', 'download'])
 </script>

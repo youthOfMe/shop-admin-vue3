@@ -10,20 +10,27 @@
         <SearchItem label="订单编号">
           <el-input v-model="searchForm.no" placeholder="订单编号" clearable></el-input>
         </SearchItem>
-
-        <!-- <template #show>
-          <SearchItem>
-            <el-select v-model="searchForm.category_id" placeholder="请选择商品分类" clearable>
-              <el-option v-for="item in category_list" :key="item.vid" :label="item.name" :value="item.id">
-              </el-option>
-            </el-select>
+        <template #show>
+          <SearchItem label="收货人">
+            <el-input v-model="searchForm.name" placeholder="收货人" clearable></el-input>
           </SearchItem>
-        </template> -->
+          <SearchItem label="手机号">
+            <el-input v-model="searchForm.phone" placeholder="收货人" clearable></el-input>
+          </SearchItem>
+          <SearchItem label="开始日期">
+            <el-date-picker value-format="YYYY-MM-DD" v-model="searchForm.starttime" type="date" placeholder="开始日期"
+              style="width: 90%;" />
+          </SearchItem>
+          <SearchItem label="结束时间">
+            <el-date-picker value-format="YYYY-MM-DD" v-model="searchForm.endtime" type="date" placeholder="结束日期"
+              style="width: 90%;" />
+          </SearchItem>
+        </template>
       </Search>
 
 
       <!-- 新增|刷新 -->
-      <ListHeader layout="">
+      <ListHeader layout="refresh,download" @refresh="getData" @download="handleExportExcel">
         <el-button type="danger" size="small" @click="handleMultiDelete">批量删除</el-button>
       </ListHeader>
 
@@ -102,8 +109,9 @@
         <el-pagination layout="prev, pager, next" background :total="total" :current-page="currentPage"
           :page-size="limit" @current-change="getData" />
       </div>
-
     </el-card>
+
+    <ExportExcel :tabs="tabbars" ref="ExportExcelRef"></ExportExcel>
 
   </div>
 </template>
@@ -113,6 +121,7 @@ import { ref } from 'vue'
 import ListHeader from '@/components/ListHeader.vue'
 import Search from '@/components/Search.vue'
 import SearchItem from '@/components/SearchItem.vue'
+import ExportExcel from './ExportExcel.vue'
 
 import {
   getOrderList,
@@ -184,4 +193,6 @@ const tabbars = [{
   name: '退款中'
 },]
 
+const ExportExcelRef = ref(null)
+const handleExportExcel = () => ExportExcelRef.value.open()
 </script>

@@ -11,3 +11,11 @@ export function deleteOrder(ids) {
     ids
   })
 }
+
+
+export function exportOrder(query = {}) {
+  const r = queryParams(query)
+  return axios.post(`/admin/order/excelexport${r}`, {}, {
+    responseType: 'blob'
+  })
+}
