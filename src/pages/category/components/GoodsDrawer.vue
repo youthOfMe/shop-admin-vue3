@@ -36,7 +36,8 @@ import {
 
 import {
   getCategoryGoods,
-  deleteCategoryGoods
+  deleteCategoryGoods,
+  connectCategoryGoods
 } from '@/api/category'
 
 const formDrawerRef = ref(null)
@@ -72,7 +73,18 @@ const handleDelete = (row) => {
 
 const ChooseGoodsRef = ref(null)
 const handleConnect = () => {
-  ChooseGoodsRef.value.open()
+  ChooseGoodsRef.value.open((goods_ids) => {
+    formDrawerRef.value.showLoading()
+    connectCategoryGoods({
+      category_id: category_id.value,
+      goods_ids
+    }).then(res => {
+      getData()
+      toast('关联成功')
+    }).finally(() => {
+      formDrawerRef.value.hideLoading()
+    })
+  })
 }
 
 defineExpose({
