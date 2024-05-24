@@ -11,7 +11,6 @@
             <el-option v-for="item in user_level" :key="item.id" :label="item.name" :value="item.id">
             </el-option>
           </el-select>
-
         </SearchItem>
       </template>
     </Search>
@@ -20,7 +19,7 @@
     <ListHeader @create="handleCreate" @refresh="getData"></ListHeader>
 
     <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
-      <el-table-column label="管理员">
+      <el-table-column label="会员">
         <template #default="{ row }">
           <div class="flex items-center">
             <el-avatar :size="40" :src="row.avatar">
@@ -33,24 +32,34 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="所属管理员" align="center">
+      <el-table-column label="会员等级" align="center">
         <template #default="{ row }">
-          {{ row.role?.name || '-' }}
+          {{ row.user_level?.name || '-' }}
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="120">
+      <el-table-column label="登录注册" align="center">
+        <template #default="{ row }">
+          <p v-if="row.last_login_time">
+            最后登录: {{ row.last_login_time }}
+          </p>
+          <p>
+            注册时间: {{ row.create_time }}
+          </p>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" width="100">
         <template #default="{ row }">
           <el-switch :modelValue="row.status" :active-value="1" :inactive-value="0"
             @change="handleStatusChange($event, row)" :loading="row.statusLoading" :disabled="row.super === 1">
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="180" align="center">
         <template #default="scope">
           <small v-if="scope.row.super === 1" class="text-sm text-gray-500">暂无操作</small>
           <div v-else>
             <el-button type="primary" size="small" text @click="handleEdit(scope.row)">修改</el-button>
-            <el-popconfirm title="是否要删除该管理员?" confirmButtonText="确认" cancelButtonText="取消"
+            <el-popconfirm title="是否要删除该记录?" confirmButtonText="确认" cancelButtonText="取消"
               @confirm="handleDelete(scope.row.id)">
               <template #reference>
                 <el-button type="primary" size="small" text>删除</el-button>
@@ -74,14 +83,23 @@
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" placeholder="密码"></el-input>
         </el-form-item>
+        <el-form-item label="昵称" prop="nickname">
+          <el-input v-model="form.nickname" placeholder="昵称"></el-input>
+        </el-form-item>
         <el-form-item label="头像" prop="avatar">
           <ChooseImage v-model="form.avatar" />
         </el-form-item>
-        <el-form-item label="所属角色" prop="role_id">
-          <el-select v-model="form.role_id" placeholder="选择所属角色">
-            <el-option v-for="item in roles" :key="item.id" :label="item.name" :value="item.id">
+        <el-form-item label="会员等级" prop="user_level_id">
+          <el-select v-model="form.user_level_id" placeholder="选择会员等级">
+            <el-option v-for="item in user_level" :key="item.id" :label="item.name" :value="item.id">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="手机" prop="phone">
+          <el-input v-model="form.phone" placeholder="手机"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="form.email" placeholder="邮箱"></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0">
@@ -158,9 +176,12 @@ const {
   form: {
     username: '',
     password: '',
-    role_id: null,
+    user_level_id: null,
     status: 1,
-    avatar: ''
+    avatar: '',
+    nickname: '',
+    phone: '',
+    email: ''
   },
   getData,
   update: updateUser,
