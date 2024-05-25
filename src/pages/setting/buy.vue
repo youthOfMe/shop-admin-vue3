@@ -181,7 +181,6 @@ function getData() {
     for (const key in form) {
       form[key] = res[key]
     }
-    form.password_encrypt = form.password_encrypt.split(',')
   }).finally(() => {
     loading.value = false
   })

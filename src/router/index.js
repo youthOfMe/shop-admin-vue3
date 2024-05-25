@@ -159,6 +159,14 @@ const asyncRoutes = [
       title: '支付设置'
     }
   },
+  {
+    path: '/setting/ship',
+    name: '/setting/ship',
+    component: () => import('@/pages/setting/ship.vue'),
+    meta: {
+      title: '支付设置'
+    }
+  },
 ]
 
 export const router = createRouter({
