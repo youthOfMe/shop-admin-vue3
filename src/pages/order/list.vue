@@ -94,8 +94,8 @@
         </el-table-column>
         <el-table-column label="总库存" width="90" prop="stock" align="center"></el-table-column>
         <el-table-column label="操作">
-          <template #default="scope">
-            <el-button class="px-1" type="primary" size="small" text>订单详情</el-button>
+          <template #default="{ row }">
+            <el-button class="px-1" type="primary" size="small" text @click="openInfoModal(row)">订单详情</el-button>
             <el-button v-if="searchForm.tab === 'noship'" class="px-1" type="primary" size="small" text>订单发货</el-button>
             <el-button v-if="searchForm.tab === 'refunding'" class="px-1" type="primary" size="small"
               text>同意退款</el-button>
@@ -113,6 +113,8 @@
 
     <ExportExcel :tabs="tabbars" ref="ExportExcelRef"></ExportExcel>
 
+    <InfoModal ref="InfoModalRef" :info="info"></InfoModal>
+
   </div>
 </template>
 
@@ -122,6 +124,7 @@ import ListHeader from '@/components/ListHeader.vue'
 import Search from '@/components/Search.vue'
 import SearchItem from '@/components/SearchItem.vue'
 import ExportExcel from './ExportExcel.vue'
+import InfoModal from './InfoModal.vue'
 
 import {
   getOrderList,
@@ -195,4 +198,21 @@ const tabbars = [{
 
 const ExportExcelRef = ref(null)
 const handleExportExcel = () => ExportExcelRef.value.open()
+
+const InfoModalRef = ref(null)
+const info = ref(null)
+const openInfoModal = (row) => {
+  row.order_items = row.order_items.map(o => {
+    if (o.skus_type === 1 && o.goods_skus) {
+      const s = []
+      for (const key in o.goods_skus.skus) {
+        s.push(o.goods_skus.skus[key].value)
+      }
+      o.sku = s.join(',')
+    }
+    return o
+  })
+  info.value = row
+  InfoModalRef.value.open()
+}
 </script>
