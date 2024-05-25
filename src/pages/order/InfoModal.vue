@@ -30,6 +30,9 @@
         </el-form-item>
         <el-form-item label="运单号">
           {{ info.ship_data.express_no }}
+          <el-button type="primary" text size="small" @click="openShipInfoModal(info.id)" class="ml-3"
+            :loading="loading">查看物流</el-button>
+
         </el-form-item>
         <el-form-item label="发货时间">
           {{ ship_time }}
@@ -96,11 +99,14 @@
       </el-form-item>
     </el-form>
   </el-drawer>
+
+  <ShipInfoModal ref="ShipInfoModalRef" />
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useDateFormat } from '@vueuse/core'
+import ShipInfoModal from './ShipInfoModal.vue'
 
 const props = defineProps({
   info: Object
@@ -128,7 +134,15 @@ const dialogVisible = ref(false)
 
 const open = () => {
   dialogVisible.value = true
-  console.log(props.info)
+}
+
+const ShipInfoModalRef = ref(null)
+const loading = ref(false)
+const openShipInfoModal = (id) => {
+  loading.value = true
+  ShipInfoModalRef.value.open(id).finally(() => {
+    loading.value = false
+  })
 }
 
 defineExpose({
