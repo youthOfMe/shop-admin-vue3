@@ -19,33 +19,46 @@
             <el-table-column label="操作" align="center" width="150">
               <template #default="{ row }">
                 <el-button type="primary" size="small" text @click="open(row.key)">配置</el-button>
-
               </template>
             </el-table-column>
           </el-table>
 
         </el-tab-pane>
         <el-tab-pane label="购物设置" name="second">
-          <!-- <el-form-item label="默认上传方式">
-            <el-radio-group v-model="form.upload_method">
-              <el-radio label="oss" border>
-                对象存储
-              </el-radio>
-            </el-radio-group>
+          <el-form-item label="未支付订单">
+            <div>
+              <el-input v-model="form.close_order_minute" placeholder="未支付订单" type="number">
+                <template #append>
+                  分钟后自动关闭
+                </template>
+              </el-input>
+              <small class="text-gray-500 flex mt-1">
+                订单下单未付款, n分钟后自动关闭, 设置0不自动关闭
+              </small>
+            </div>
           </el-form-item>
-          <el-form-item label="Bucket">
-            <el-input v-model="form.upload_config.Bucket" placeholder="Bucket" style="width: 30%;"></el-input>
+          <el-form-item label="已发货订单">
+            <div>
+              <el-input v-model="form.auto_received_day" placeholder="已发货订单">
+                <template #append>
+                  天后自动确认收货
+                </template>
+              </el-input>
+              <small class="text-gray-500 flex mt-1">
+                如果在期间未确认收货, 系统自动完成收货, 设置0不自动收货
+              </small>
+            </div>
           </el-form-item>
-          <el-form-item label="ACCESS_KEY">
-            <el-input v-model="form.upload_config.ACCESS_KEY" placeholder="密码最小长度" style="width: 30%;"></el-input>
+          <el-form-item label="已完成订单">
+            <div>
+              <el-input v-model="form.after_sale_day" placeholder="已完成订单">
+                <template #append>
+                  天内允许申请售后
+                </template>
+              </el-input>
+              <small class="text-gray-500 flex mt-1">订单完成后, 用户在n天内可以发起售后申请, 设置0不允许申请售后</small>
+            </div>
           </el-form-item>
-          <el-form-item label="SECRET_KEY">
-            <el-input v-model="form.upload_config.SECRET_KEY" placeholder="密码最小长度" style="width: 30%;"></el-input>
-          </el-form-item>
-          <el-form-item label="空间域名">
-            <el-input v-model="form.upload_config.http" placeholder="空间域名" style="width: 30%;"></el-input>
-            <small class="text-gray-500 flex mt-1">请补全 http:// 或 https://</small>
-          </el-form-item> -->
           <el-form-item>
             <el-button type="primary" size="default" @click="submit">保存</el-button>
           </el-form-item>
@@ -72,8 +85,7 @@
           <el-input v-model="form.wxpay.app_id" placeholder="app_id" style="width: 90%;"></el-input>
         </el-form-item>
         <el-form-item label="小程序 APPID">
-          <el-input v-model="form.wxpay.miniapp_id" placeholder="miniapp_id" style="width: 90%;" type="textarea"
-            rows="4"></el-input>
+          <el-input v-model="form.wxpay.miniapp_id" placeholder="miniapp_id" style="width: 90%;"></el-input>
         </el-form-item>
         <el-form-item label="小程序 secret">
           <el-input v-model="form.wxpay.secret" placeholder="secret" style="width: 90%;"></el-input>
@@ -181,7 +193,6 @@ const submit = () => {
 
   setSysconfig({
     ...form,
-    password_encrypt: form.password_encrypt.join(',')
   }).then(res => {
     toast('修改成功')
     getData()
