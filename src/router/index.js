@@ -151,6 +151,14 @@ const asyncRoutes = [
       title: '会员等级'
     }
   },
+  {
+    path: '/setting/buy',
+    name: '/setting/buy',
+    component: () => import('@/pages/setting/buy.vue'),
+    meta: {
+      title: '支付设置'
+    }
+  },
 ]
 
 export const router = createRouter({
