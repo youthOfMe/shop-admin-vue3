@@ -38,7 +38,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="用户信息">
+        <el-table-column label="用户信息" width="200">
           <template #default="{ row }">
             <div class="text-xs">
               <p>用户: {{ row.username }}</p>
@@ -56,9 +56,9 @@
         <el-table-column label="提现次数" prop="cash_out_time" align="center"></el-table-column>
         <el-table-column label="未提现金额" prop="no_cash_out_price" align="center"></el-table-column>
         <el-table-column fixed="right" label="操作" width="180" align="center">
-          <template #default="scope">
-            <el-button type="primary" size="small" text>推广人</el-button>
-            <el-button type="primary" size="small" text>推广订单</el-button>
+          <template #default="{ row }">
+            <el-button type="primary" size="small" text @click="openDataDrawer(row.id, 'user')">推广人</el-button>
+            <el-button type="primary" size="small" text @click="openDataDrawer(row.id, 'order')">推广订单</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -67,9 +67,10 @@
         <el-pagination layout="prev, pager, next" background :total="total" :current-page="currentPage"
           :page-size="limit" @current-change="getData" />
       </div>
-
-
     </el-card>
+
+    <DataDrawer ref="dataDrawerRef"></DataDrawer>
+    <DataDrawer ref="orderDataDrawerRef" type="order"></DataDrawer>
   </div>
 </template>
 <script setup>
@@ -77,6 +78,7 @@ import { ref } from 'vue'
 import Search from '@/components/Search.vue'
 import SearchItem from '@/components/SearchItem.vue'
 import Panel from './panel.vue';
+import DataDrawer from './dataDrawer.vue'
 
 import {
   getAgentList
@@ -107,4 +109,10 @@ const {
     total.value = res.totalCount
   }
 })
+
+const dataDrawerRef = ref(null)
+const orderDataDrawerRef = ref(null)
+const openDataDrawer = (id, type) => {
+  (type === 'user' ? dataDrawerRef : orderDataDrawerRef).value.open(id)
+}
 </script>
