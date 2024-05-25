@@ -10,24 +10,25 @@ export function toast(message, type = "success", dangerouslyUseHTMLString = true
   })
 }
 
+// 显示确认框
 export function showModal(content = "提示内容", type = "warning", title = "") {
   return ElMessageBox.confirm(
-    title,
     content,
+    title,
     {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
-      type
+      type,
     }
   )
 }
 
-// 显示全屏loading
+// 显示loading
 export function showFullLoading() {
   nprogress.start()
 }
 
-// 隐藏全屏loading
+// 隐藏loading
 export function hideFullLoading() {
   nprogress.done()
 }

@@ -5,7 +5,6 @@ import {
 
 import Admin from '@/layouts/admin.vue'
 import Index from '@/pages/index.vue'
-import About from '../pages/about.vue'
 import NotFound from '@/pages/404.vue'
 
 // 这是默认路由 所有用户共享
@@ -173,6 +172,14 @@ const asyncRoutes = [
     component: () => import('@/pages/distribution/index.vue'),
     meta: {
       title: '分销员设置'
+    }
+  },
+  {
+    path: '/distribution/setting',
+    name: '/distribution/setting',
+    component: () => import('@/pages/distribution/setting.vue'),
+    meta: {
+      title: '分销设置'
     }
   },
 ]
