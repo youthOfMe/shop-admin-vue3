@@ -19,7 +19,7 @@
     <ListHeader @create="handleCreate" @refresh="getData"></ListHeader>
 
     <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
-      <el-table-column label="会员">
+      <el-table-column label="会员" width="200">
         <template #default="{ row }">
           <div class="flex items-center">
             <el-avatar :size="40" :src="row.avatar">
