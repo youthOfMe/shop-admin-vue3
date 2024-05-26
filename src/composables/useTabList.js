@@ -49,6 +49,7 @@ export function useTabList() {
   })
 
   const changeTab = (t) => {
+    console.log(t)
     activeTab.value = t.props.name
     router.push(t.props.name)
   }
