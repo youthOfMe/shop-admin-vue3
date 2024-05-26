@@ -29,7 +29,7 @@ import FTagList from './components/FTagList.vue'
 
 <style scoped>
 .el-aside {
-  transition: all 1s;
+  transition: all 0.5s;
 }
 
 .fade-enter-from {

@@ -59,6 +59,7 @@ const handleSelect = (e) => {
   top: 64px;
   bottom: 0;
   left: 0;
+  z-index: 1000;
   overflow-y: auto;
   overflow-x: hidden;
   @apply shadow-md fixed bg-light-50;

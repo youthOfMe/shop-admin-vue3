@@ -59,6 +59,8 @@ const store = createStore({
     logout({ commit }) {
       // 移除cookie里的token
       removeToken()
+      // 清除当前用户状态 vuex
+      commit("SET_USERINFO", {})
     }
   }
 })

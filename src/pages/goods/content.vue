@@ -35,7 +35,6 @@ const open = (row) => {
   }).finally(() => {
     row.contentLoading = false
   })
-
 }
 
 const emit = defineEmits(["reloadData"])

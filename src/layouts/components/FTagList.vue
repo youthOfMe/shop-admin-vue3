@@ -39,6 +39,7 @@ const {
 
 <style scoped>
 .f-tag-list {
+  transition: all 0.5s;
   @apply fixed bg-gray-100 flex items-center px-2;
   top: 64px;
   right: 0;

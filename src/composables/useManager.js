@@ -4,7 +4,6 @@ import { showModal, toast } from '@/composables/util'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 export function useRepassword() {
-  const router = useRouter()
   const store = useStore()
 
   // 修改密码
