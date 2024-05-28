@@ -18,6 +18,7 @@ export function useInitTable(opt = {}) {
     }
   }
 
+  // 初始化列表展示的数据
   const tableData = ref([])
   const loading = ref(false)
 

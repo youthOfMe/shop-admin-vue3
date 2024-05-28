@@ -1,4 +1,3 @@
-import { AddLocation } from '@element-plus/icons-vue/dist/types';
 <template>
   <div>
     <el-row :gutter="20" class="mt-5">

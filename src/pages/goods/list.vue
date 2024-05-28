@@ -42,7 +42,7 @@
           v-if="searchForm.tab === 'all' || searchForm.tab === 'saling'">下架</el-button>
       </ListHeader>
 
-      <el-table ref="multiSelectionIds" @selection-change="handleSelectionChange" :data="tableData" stripe
+      <el-table ref="multipleTableRef" @selection-change="handleSelectionChange" :data="tableData" stripe
         style="width: 100%" v-loading="loading">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="商品" width="300">

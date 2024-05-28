@@ -1,5 +1,5 @@
 <template>
-  <el-main class="image-main">
+  <el-main class="image-main" v-loading="loading">
     <div class="top p-3">
       <!-- <div v-for="(item, index) in list" :key="index">{{ item.url }}</div> -->
       <el-row :gutter="10">

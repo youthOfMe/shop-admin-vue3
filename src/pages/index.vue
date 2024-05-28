@@ -61,14 +61,16 @@
       </el-col>
     </el-row>
 
+    <div :style="{ color: color, width: outputWidth + 'px' }" style="background-color: #000000;">{{ output }}</div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import CountTo from '@/components/CountTo.vue'
 import IndexNavs from '@/components/IndexNavs.vue'
 import IndexCard from '@/layouts/components/IndexCard.vue'
+import { TransitionPresets, useTransition } from '@vueuse/core'
 import {
   getStatistics1,
   getStatistics2
@@ -86,4 +88,55 @@ getStatistics2().then(res => {
   goods.value = res.goods
   order.value = res.order
 })
+
+// 测试
+const source = ref(0)
+const output = useTransition(source, {
+  duration: 2000,
+  transition: TransitionPresets.easeInOutCubic,
+})
+source.value = 999
+
+const colorValue = ref([0, 0, 0])
+
+// 使用三次贝塞尔曲线动画缓动
+// const outputColor = useTransition(colorValue, {
+//   duration: 5000,
+//   transition: [0.75, 1, 1, 1],
+// })
+
+// 可以进行自定义动画缓动数学推导公式
+function easeOutElastic(n) {
+  return n === 0
+    ? 0
+    : n === 1
+      ? 1
+      : (2 ** (-10 * n)) * Math.sin((n * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1
+}
+const outputColor = useTransition(colorValue, {
+  duration: 2000,
+  transition: () => easeOutElastic(1),
+  onStarted() {
+    console.log('开始过渡')
+  },
+  onFinished() {
+    console.log('结束过渡')
+  }
+})
+
+colorValue.value = [255, 255, 255]
+
+const color = computed(() => {
+  const [r, g, b] = outputColor.value
+  return `rgb(${r}, ${g}, ${b})`
+})
+
+// 使用三次贝塞尔曲线定义复杂的动画效果
+const widthValue = ref(50)
+
+const outputWidth = useTransition(widthValue, {
+  duration: 2000,
+  transition: [.33, 2.57, .7, -0.08],
+})
+widthValue.value = 500
 </script>

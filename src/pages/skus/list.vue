@@ -4,7 +4,7 @@
     <ListHeader layout="create,delete,refresh" @create="handleCreate" @refresh="getData" @delete="handleMultiDelete">
     </ListHeader>
 
-    <el-table ref="multiSelectionIds" @selection-change="handleSelectionChange" :data="tableData" stripe
+    <el-table ref="multipleTableRef" @selection-change="handleSelectionChange" :data="tableData" stripe
       style="width: 100%" v-loading="loading">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="name" label="规格名称" />
@@ -59,7 +59,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import FormDrawer from '@/components/FormDrawer.vue'
 import TagInput from '@/components/TagInput.vue'
 import ListHeader from '@/components/ListHeader.vue'
